@@ -20,7 +20,12 @@ const user = {
     path: 'info',
     component: () => import('@/views/user/Info'),
     name: 'Info',
-    meta: { title: '查看', noCache: true }
+    meta: { title: '个人信息', noCache: true }
+  }, {
+    path: 'lesson',
+    component: () => import('@/views/user/Lesson'),
+    name: 'Lesson',
+    meta: { title: '开课信息', noCache: true }
   }]
 }
 

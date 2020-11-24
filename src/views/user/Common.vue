@@ -185,7 +185,7 @@ export default {
   methods: {
     // 获取数据
     toData() {
-      this.list = User.data.list
+      this.list = User.list
       this.total = this.list.length
       this.loading = false
     },

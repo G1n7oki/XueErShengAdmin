@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container user-info">
+  <div class="app-container">
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
@@ -9,6 +9,7 @@
             :key="item.id"
             :class="{'active': item.id === tabbar.current}"
             class="row"
+            @click="handleTabItem(item.id)"
           >{{ item.name }}</div>
         </div>
         <el-button type="primary">重置密码</el-button>
@@ -16,7 +17,7 @@
       <!-- /卡片头 -->
       <!-- 个人信息  -->
       <el-form
-        v-if="tabbar.current === 1"
+        ref="userinfo"
         :model="userinfo"
         label-width="100px"
         class="userinfo"
@@ -78,10 +79,70 @@
           <el-cascader
             v-model="userinfo.location"
             :options="area"
-            style="width: 220px"
             :props="{ value: 'label' }"
-            @change="demo"
+            filterable
+            style="width: 220px"
           />
+        </el-form-item>
+        <el-form-item label="婚姻状况">
+          <el-select v-model="userinfo.marital" style="width: 220px">
+            <el-option label="已婚" value="1" />
+            <el-option label="未婚" value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职业">
+          <el-input
+            v-model="userinfo.post"
+            clearable
+            placeholder="请输入职业"
+            style="width: 220px"
+          />
+        </el-form-item>
+        <el-form-item label="收教材地址">
+          <el-cascader
+            v-model="userinfo.delivery"
+            :options="area"
+            :props="{ value: 'label' }"
+            filterable
+            style="width: 220px"
+          />
+        </el-form-item>
+        <el-form-item label="详细地址">
+          <el-input
+            v-model="userinfo.detail"
+            :rows="2"
+            type="textarea"
+            clearable
+            resize="none"
+            placeholder="请输入详细地址"
+            style="width: 220px"
+          />
+        </el-form-item>
+        <el-form-item label="身份证正面">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleUploadIdFront"
+          >
+            <img v-if="userinfo.front" :src="userinfo.front" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="身份证反面">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleUploadIdReverse"
+          >
+            <img v-if="userinfo.reverse" :src="userinfo.reverse" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="hanleSave">保存</el-button>
+          <el-button>取消</el-button>
         </el-form-item>
       </el-form>
       <!-- /个人信息  -->
@@ -115,52 +176,104 @@ export default {
         id: '', // 身份证
         birthday: '', // 生日
         sex: '', // 性别
-        nation: '汉族', // 民族
+        nation: '', // 民族
         political: '', // 政治面貌
         registered: '', // 户口类型
-        location: '' // 户口所在地
+        location: '', // 户口所在地
+        marital: '', // 婚姻状况
+        post: '', // 职业
+        delivery: '', // 收教材地址
+        detail: '', // 详细地址
+        front: '', // 身份证正面
+        reverse: '' // 身份证反面
       },
-      area: []
+      area: [] // 省市区
     }
   },
   created() {
     this.nation = nation.data
     this.area = area
   },
+  // 图片上传需要后台服务器支持
   methods: {
-    demo() {
-      console.log(this.userinfo.location)
+    handleUploadIdFront(res, file) {
+      this.userinfo.front = URL.createObjectURL(file.raw)
+    },
+    handleUploadIdReverse(res, file) {
+      this.userinfo.reverse = URL.createObjectURL(file.raw)
+    },
+    // 点击保存
+    hanleSave() {
+      this.$refs['userinfo'].validate(valid => {
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    // 点击选项卡
+    handleTabItem(id) {
+      if (id === 2) {
+        this.$router.push({ path: '/user/lesson' })
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
-.user-info {
-  .flex-wrap {
+.flex-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  .flex {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 20px;
 
-    .flex {
-      display: flex;
+    .row {
+      color: #101010;
+      font-size: 16px;
+      margin-right: 64px;
+      cursor: pointer;
 
-      .row {
-        color: #101010;
-        font-size: 16px;
-        margin-right: 64px;
-        cursor: pointer;
+      &.active {
+        color: #38A28A;
+      }
 
-        &.active {
-          color: #38A28A;
-        }
-
-        &:hover {
-          color: #38A28A;
-        }
+      &:hover {
+        color: #38A28A;
       }
     }
   }
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
