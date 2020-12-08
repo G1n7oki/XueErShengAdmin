@@ -20,12 +20,35 @@ const user = {
     path: 'info',
     component: () => import('@/views/user/Info'),
     name: 'Info',
-    meta: { title: '个人信息', noCache: true }
+    meta: { title: '个人信息', noCache: true },
+    hidden: true
   }, {
     path: 'lesson',
     component: () => import('@/views/user/Lesson'),
     name: 'Lesson',
-    meta: { title: '开课信息', noCache: true }
+    meta: { title: '开课信息', noCache: true },
+    hidden: true
+  }, {
+    path: 'detail',
+    component: () => import('@/views/user/Detail'),
+    name: 'Detail',
+    meta: { title: '学习详情', noCache: true },
+    hidden: true
+  }, {
+    path: 'student',
+    component: () => import('@/views/user/Student'),
+    name: 'Student',
+    meta: { title: '学员用户', noCache: true }
+  }, {
+    path: 'blacklist',
+    component: () => import('@/views/user/Blacklist'),
+    name: 'Blacklist',
+    meta: { title: '黑名单', noCache: true }
+  }, {
+    path: 'correction',
+    component: () => import('@/views/user/Correction'),
+    name: 'Correction',
+    meta: { title: '题目纠错', noCache: true }
   }]
 }
 

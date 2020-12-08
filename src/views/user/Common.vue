@@ -118,11 +118,11 @@
           width="200"
           class-name="small-padding fixed-width"
         >
-          <template>
-            <el-button type="success" size="mini" @click="handleCheck">
+          <template slot-scope="{row}">
+            <el-button type="success" size="mini" @click="handleCheck(row.id)">
               查看
             </el-button>
-            <el-button type="primary" size="mini">
+            <el-button type="primary" size="mini" @click="handleOpen">
               开课
             </el-button>
           </template>
@@ -137,6 +137,8 @@
         @pagination="toData"
       />
     </el-card>
+    <!-- 开课 -->
+    <continue :flag="dialogVisible" @close="hide" />
   </div>
 </template>
 
@@ -146,9 +148,13 @@
  */
 import User from '@/api/user.json'
 import Pagination from '@/components/Pagination'
+import Continue from '@/views/user/Continue'
 export default {
   name: 'Common',
-  components: { Pagination },
+  components: {
+    Pagination,
+    Continue
+  },
   filters: {
     formatSource(source) {
       switch (source) {
@@ -176,7 +182,8 @@ export default {
       },
       list: [],
       total: 0,
-      loading: true
+      loading: true,
+      dialogVisible: false
     }
   },
   created() {
@@ -200,8 +207,15 @@ export default {
       // console.log(value)
     },
     // 点击查看
-    handleCheck() {
-      // do something
+    handleCheck(id) {
+      this.$router.push({ path: '/user/info', query: { id } })
+    },
+    // 点击开课
+    handleOpen() {
+      this.dialogVisible = true
+    },
+    hide(value) {
+      this.dialogVisible = false
     }
   }
 }

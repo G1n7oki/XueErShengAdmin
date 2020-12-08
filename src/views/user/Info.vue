@@ -3,15 +3,7 @@
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
-        <div class="flex">
-          <div
-            v-for="item in tabbar.list"
-            :key="item.id"
-            :class="{'active': item.id === tabbar.current}"
-            class="row"
-            @click="handleTabItem(item.id)"
-          >{{ item.name }}</div>
-        </div>
+        <user-tab-bar :current="1" :id="id" />
         <el-button type="primary">重置密码</el-button>
       </div>
       <!-- /卡片头 -->
@@ -141,7 +133,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="hanleSave">保存</el-button>
+          <el-button type="primary" @click="handleSave">保存</el-button>
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
@@ -151,25 +143,16 @@
 </template>
 
 <script>
+import UserTabBar from '@/views/user/TabBar'
 import { nation } from '@/utils/nation.js'
 import { area } from '@/utils/area.js'
 export default {
   name: 'Info',
+  components: {
+    UserTabBar
+  },
   data() {
     return {
-      tabbar: { // 切换卡
-        list: [{
-          id: 1,
-          name: '个人信息'
-        }, {
-          id: 2,
-          name: '开课信息'
-        }, {
-          id: 3,
-          name: '学习详情'
-        }],
-        current: 1
-      },
       nation: [],
       userinfo: { // 个人信息
         name: '', // 姓名
@@ -187,10 +170,13 @@ export default {
         front: '', // 身份证正面
         reverse: '' // 身份证反面
       },
-      area: [] // 省市区
+      area: [], // 省市区
+      id: '' // 用户id
     }
   },
   created() {
+    this.id = this.$route.query.id
+
     this.nation = nation.data
     this.area = area
   },
@@ -203,7 +189,7 @@ export default {
       this.userinfo.reverse = URL.createObjectURL(file.raw)
     },
     // 点击保存
-    hanleSave() {
+    handleSave() {
       this.$refs['userinfo'].validate(valid => {
         if (valid) {
           alert('submit!')
@@ -212,12 +198,6 @@ export default {
           return false
         }
       })
-    },
-    // 点击选项卡
-    handleTabItem(id) {
-      if (id === 2) {
-        this.$router.push({ path: '/user/lesson' })
-      }
     }
   }
 }
@@ -229,25 +209,6 @@ export default {
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 20px;
-
-  .flex {
-    display: flex;
-
-    .row {
-      color: #101010;
-      font-size: 16px;
-      margin-right: 64px;
-      cursor: pointer;
-
-      &.active {
-        color: #38A28A;
-      }
-
-      &:hover {
-        color: #38A28A;
-      }
-    }
-  }
 }
 
 .avatar-uploader .el-upload {
