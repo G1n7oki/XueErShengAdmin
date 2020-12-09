@@ -290,25 +290,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.table-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-
-  .left {
-    display: flex;
-    align-items: center;
-
-    .name {
-      font-size: 16px;
-      color: #101010;
-      margin-right: 30px;
-    }
-  }
-
-}
-
 .icon {
   font-size: 20px;
   margin-left: 20px
