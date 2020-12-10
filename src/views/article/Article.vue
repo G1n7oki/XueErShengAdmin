@@ -34,7 +34,7 @@
         <div class="left">
           <div class="name">文章列表</div>
         </div>
-        <el-button type="primary" @click="dialogVisible = true">添加文章</el-button>
+        <el-button type="primary" @click="handleCreate">添加文章</el-button>
       </div>
       <!-- /Table header -->
       <!-- table -->
@@ -120,8 +120,8 @@
 </template>
 
 <script>
-import Article from '@/api/article.json'
 import Pagination from '@/components/Pagination'
+import { listArticle } from '@/api/article'
 export default {
   name: 'Article',
   components: {
@@ -136,8 +136,7 @@ export default {
         page: 1,
         limit: 10
       },
-      dialogVisible: false,
-      loading: true,
+      loading: false,
       list: [],
       total: 0
     }
@@ -146,16 +145,30 @@ export default {
     this.toData()
   },
   methods: {
+    // Get list
     toData() {
-      this.list = Article.list
-      this.loading = false
-      this.total = Article.list.length
+      this.loading = true
+      listArticle().then(response => {
+        this.list = response.data
+        this.loading = false
+        this.total = this.list.length
+      }).catch(error => {
+        this.list = []
+        this.loading = false
+        console.log(error)
+      })
     },
-    handleQuery() {}
+    // Query
+    handleQuery() {},
+    // Create
+    handleCreate() {
+      this.$router.push({ path: '/article/create-article' })
+    },
+    // Update
+    handleUpdate(row) {},
+    // Delete
+    handleDelete(row) {}
   }
 }
 </script>
 
-<style scoped>
-
-</style>

@@ -44,4 +44,8 @@ export default {
     }
 
   }
+  // element-ui 样式重置
+  .el-form-item__label {
+    font-weight: 500;
+  }
 </style>
