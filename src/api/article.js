@@ -47,3 +47,11 @@ export function listArticle(query) {
     params: query
   })
 }
+
+export function listDiscover(query) {
+  return request({
+    url: '/discover/list',
+    method: 'get',
+    params: query
+  })
+}

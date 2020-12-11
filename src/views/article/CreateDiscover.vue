@@ -45,14 +45,6 @@
         <el-form-item label="文章内容" prop="content">
           <tinymce v-model="form.content" :height="300" />
         </el-form-item>
-        <el-form-item label="适用专业" prop="profession">
-          <el-cascader
-            v-model="form.profession"
-            :options="[]"
-            :props="{ value: 'label' }"
-            filterable
-          />
-        </el-form-item>
         <el-form-item label="是否发布" prop="use">
           <el-select v-model="form.use" placeholder="请选择">
             <el-option
@@ -65,12 +57,17 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="排序">
-          <el-input
-            v-model="form.sort"
-            style="width: 200px"
-            placeholder="请输入排序"
-          />
+        <el-form-item label="文章图片" prop="image">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleUpload"
+          >
+            <el-image v-if="form.image" :src="form.image" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+          <div>只能上传jpg/png文件，且不超过500kb</div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary">保存</el-button>
@@ -84,7 +81,7 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 export default {
-  name: 'CreateArticle',
+  name: 'CreateDiscover',
   components: {
     Tinymce
   },
@@ -92,12 +89,10 @@ export default {
     return {
       form: {
         title: '',
-        introduction: '',
         type: '',
         content: '',
-        profession: '',
         use: '',
-        sort: ''
+        image: ''
       },
       rules: {
         title: [
@@ -109,22 +104,48 @@ export default {
         content: [
           { required: true, message: '请填写文章内容', trigger: 'blur' }
         ],
-        profession: [
-          { required: true, message: '请选择适用专业', trigger: 'blur' }
-        ],
         use: [
           { required: true, message: '请选择是否发布', trigger: 'blur' }
         ]
       }
     }
+  },
+  methods: {
+    handleUpload() {}
   }
 }
 </script>
 
-<style scoped>
+<style>
 .title {
   font-size: 16px;
   color: #101010;
   margin-bottom: 20px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 104px;
+  height: 104px;
+  line-height: 104px;
+  text-align: center;
+}
+
+.avatar {
+  width: 104px;
+  height: 104px;
+  display: block;
 }
 </style>

@@ -38,3 +38,12 @@ export function logout() {
     method: 'post'
   })
 }
+
+// 黑名单列表
+export function listBlack(data) {
+  return request({
+    url: '/black/list',
+    method: 'get',
+    params: { data }
+  })
+}

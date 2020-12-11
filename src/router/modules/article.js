@@ -22,6 +22,22 @@ const article = {
     name: 'CreateArticle',
     meta: { title: '添加文章', noCache: true },
     hidden: true
+  }, {
+    path: 'discover',
+    component: () => import('@/views/article/Discover'),
+    name: 'Discover',
+    meta: { title: '发现列表', noCache: true }
+  }, {
+    path: 'create-discover',
+    component: () => import('@/views/article/CreateDiscover'),
+    name: 'CreateDiscover',
+    meta: { title: '添加发现文章', noCache: true },
+    hidden: true
+  }, {
+    path: 'discover-comment',
+    component: () => import('@/views/article/DiscoverComment'),
+    name: 'DiscoverComment',
+    meta: { title: '发现评论管理', noCache: true }
   }]
 }
 
