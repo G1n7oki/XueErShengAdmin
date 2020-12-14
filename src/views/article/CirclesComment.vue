@@ -1,27 +1,10 @@
 <template>
   <div class="app-container">
-    <!-- Filter -->
-    <el-card class="filter-container">
-      <div class="filter-title">筛选</div>
-      <el-form :inline="true" :model="listQuery">
-        <el-form-item>
-          <el-input v-model="listQuery.value" placeholder="内容搜索 / 用户昵称" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-    <!-- /Filter -->
     <el-card>
       <!-- Table header -->
-      <div class="table-header">
-        <div class="left">
-          <div class="name">评论列表</div>
-        </div>
-      </div>
+      <div class="table-header" />
       <!-- /Table header -->
-      <!-- Table -->
+      <!-- table -->
       <el-table
         v-loading="loading"
         :data="list"
@@ -37,7 +20,7 @@
         />
         <el-table-column
           prop="nickname"
-          label="用户昵称"
+          label="评论人昵称"
           align="center"
         />
         <el-table-column
@@ -46,18 +29,18 @@
           align="center"
         />
         <el-table-column
-          prop="source"
-          label="评论来源"
-          align="center"
-        />
-        <el-table-column
           prop="content"
           label="评论内容"
           align="center"
         />
         <el-table-column
+          prop="hit"
+          label="点赞数"
+          align="center"
+        />
+        <el-table-column
           prop="date"
-          label="时间"
+          label="添加时间"
           align="center"
         />
         <el-table-column
@@ -73,7 +56,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- /Table -->
+      <!-- /table -->
       <!-- Page -->
       <pagination
         v-show="total > 0"
@@ -89,16 +72,15 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { discover_comment_list } from '@/api/article'
+import { circle_comment } from '@/api/article'
 export default {
-  name: 'DiscoverComment',
+  name: 'CirclesComment',
   components: {
     Pagination
   },
   data() {
     return {
       listQuery: {
-        value: '',
         page: 1,
         limit: 10
       },
@@ -113,17 +95,17 @@ export default {
   methods: {
     toData() {
       this.loading = true
-      discover_comment_list().then(response => {
+      circle_comment().then(response => {
         this.list = response.data
         this.total = this.list.length
         this.loading = false
       }).catch(error => {
+        this.list = []
         this.loading = false
         console.log(error)
       })
     },
-    handleQuery() {},
-    handleDelete(row) {}
+    handleDelete() {}
   }
 }
 </script>

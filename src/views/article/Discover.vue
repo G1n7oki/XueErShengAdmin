@@ -142,7 +142,9 @@ export default {
       })
     },
     handleQuery() {},
-    handleCreate() {},
+    handleCreate() {
+      this.$router.push({ path: '/article/create-discover' })
+    },
     handleUpdate() {},
     handleDelete() {}
   }

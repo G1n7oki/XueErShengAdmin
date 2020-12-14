@@ -38,6 +38,16 @@ const article = {
     component: () => import('@/views/article/DiscoverComment'),
     name: 'DiscoverComment',
     meta: { title: '发现评论管理', noCache: true }
+  }, {
+    path: 'circles',
+    component: () => import('@/views/article/Circles'),
+    name: 'Circles',
+    meta: { title: '圈子管理', noCache: true }
+  }, {
+    path: 'circles-comment',
+    component: () => import('@/views/article/CirclesComment'),
+    name: 'CirclesComment',
+    meta: { title: '评论列表', noCache: true }
   }]
 }
 

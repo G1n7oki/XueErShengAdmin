@@ -5,17 +5,22 @@ import Layout from '@/layout'
 const teachRouter = {
   path: '/teach',
   component: Layout,
-  redirect: '/teach/teach-cell',
-  name: 'Teach',
+  redirect: '/teach',
+  name: 'Teaches',
   meta: {
     title: '教学分类',
-    icon: 'excel'
+    icon: 'education'
   },
   children: [{
     path: 'teach',
     component: () => import('@/views/teach/Teach'),
-    name: '教学分类',
+    name: 'Teach',
     meta: { title: '教学分类', noCache: true }
+  }, {
+    path: 'type',
+    component: () => import('@/views/teach/Type'),
+    name: 'Type',
+    meta: { title: '课程班型', noCache: true }
   }]
 }
 
