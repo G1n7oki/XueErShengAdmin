@@ -41,6 +41,22 @@ export default {
         color: #101010;
         margin-right: 30px;
       }
+
+      .item {
+        width: 108px;
+        height: 42px;
+        line-height: 42px;
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &.active {
+          background-color: #1890FF;
+          color: #fff;
+        }
+      }
     }
 
   }

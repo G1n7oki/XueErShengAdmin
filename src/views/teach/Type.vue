@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import { class_type_list } from '@/api/teach'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'Type',
@@ -80,22 +79,10 @@ export default {
     }
   },
   created() {
-    this.toData()
+    // this.toData()
   },
   methods: {
-    toData() {
-      this.loading = true
-      class_type_list().then(response => {
-        this.list = response.data
-        this.total = this.list.length
-        this.loading = false
-      }).catch(error => {
-        this.list = []
-        this.total = 0
-        this.loading = true
-        console.log(error)
-      })
-    },
+    toData() {},
     handleCreate() {},
     handleUpdate() {}
   }

@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 发现评论管理
+export function discover_comment_list(query) {
+  return request({
+    url: '/comments',
+    method: 'get',
+    params: query
+  })
+}
+
 export function listArticle(query) {
   return request({
     url: '/article/list',
@@ -11,14 +20,6 @@ export function listArticle(query) {
 export function listDiscover(query) {
   return request({
     url: '/discover/list',
-    method: 'get',
-    params: query
-  })
-}
-
-export function discover_comment_list(query) {
-  return request({
-    url: '/discover/comment',
     method: 'get',
     params: query
   })

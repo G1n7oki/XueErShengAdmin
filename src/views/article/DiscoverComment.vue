@@ -5,7 +5,7 @@
       <div class="filter-title">筛选</div>
       <el-form :inline="true" :model="listQuery">
         <el-form-item>
-          <el-input v-model="listQuery.value" placeholder="内容搜索 / 用户昵称" />
+          <el-input v-model="listQuery.search" placeholder="内容搜索 / 用户昵称" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -34,14 +34,15 @@
           prop="id"
           label="序号"
           align="center"
+          width="50"
         />
         <el-table-column
-          prop="nickname"
+          prop="username"
           label="用户昵称"
           align="center"
         />
         <el-table-column
-          prop="mobile"
+          prop="login_tel"
           label="手机号"
           align="center"
         />
@@ -56,7 +57,7 @@
           align="center"
         />
         <el-table-column
-          prop="date"
+          prop="addtime"
           label="时间"
           align="center"
         />
@@ -79,7 +80,7 @@
         v-show="total > 0"
         :total="total"
         :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
+        :limit.sync="listQuery.per_page"
         @pagination="toData"
       />
       <!-- /Page -->
@@ -98,9 +99,9 @@ export default {
   data() {
     return {
       listQuery: {
-        value: '',
+        search: '',
         page: 1,
-        limit: 10
+        per_page: 10
       },
       list: [],
       loading: false,
@@ -111,18 +112,18 @@ export default {
     this.toData()
   },
   methods: {
-    toData() {
+    async toData() {
       this.loading = true
-      discover_comment_list().then(response => {
-        this.list = response.data
-        this.total = this.list.length
-        this.loading = false
-      }).catch(error => {
-        this.loading = false
-        console.log(error)
-      })
+      const response = await discover_comment_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
     },
-    handleQuery() {},
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
     handleDelete(row) {}
   }
 }
