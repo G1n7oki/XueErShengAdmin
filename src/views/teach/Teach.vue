@@ -30,7 +30,7 @@
             @click="handleItem(item.pid)"
           >{{ item.name }}</div>
         </div>
-        <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogVisible = true">添加二级学科</el-button>
+        <el-button type="primary" @click="handleCreate">添加二级学科</el-button>
       </div>
       <!-- /Table header -->
       <!-- table -->
@@ -62,7 +62,7 @@
           align="center"
         >
           <template slot-scope="{row}">
-            <div class="link">{{ row.count }}</div>
+            <div class="link" @click="toNext(row)">{{ row.count }}个</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -99,30 +99,32 @@
     </el-card>
     <!-- Dialog -->
     <el-dialog
-      title="添加二级学科"
+      :title="title + '二级学科'"
       :visible.sync="dialogVisible"
     >
       <el-form
         ref="form"
+        v-loading="formLoading"
         :model="form"
         label-width="80px"
+        :rules="rules"
       >
-        <el-form-item label="分类名称">
-          <el-input v-model="form.value" placeholder="请输入名称" />
+        <el-form-item label="分类名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
-        <el-form-item label="上级分类">
-          <el-select v-model="form.value1" placeholder="请选择">
+        <el-form-item label="上级分类" prop="pid">
+          <el-select v-model="form.pid" placeholder="请选择">
             <el-option label="自学考试" :value="1" />
             <el-option label="成人高考" :value="2" />
             <el-option label="研究生" :value="3" />
             <el-option label="职业资格" :value="4" />
           </el-select>
         </el-form-item>
-        <el-form-item label="排序">
-          <el-input v-model="form.value2" placeholder="数字越大约排前" />
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="form.sort" placeholder="数字越大约排前" />
         </el-form-item>
-        <el-form-item label="是否启用">
-          <el-select v-model="form.value3" placeholder="请选择">
+        <el-form-item label="是否启用" prop="status">
+          <el-select v-model="form.status" placeholder="请选择">
             <el-option label="启用" :value="1" />
             <el-option label="禁用" :value="0" />
           </el-select>
@@ -139,7 +141,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { classify_list } from '@/api/teach'
+import { classify_list, classify_create, classify_read, classify_update, classify_delete } from '@/api/teach'
 // import { profession_list } from '@/api/profession'
 export default {
   name: 'Teach',
@@ -175,17 +177,25 @@ export default {
       },
       dialogVisible: false,
       form: {
-        value: '',
-        value1: '',
-        value2: '',
-        value3: ''
+        pid: '',
+        name: '',
+        sort: '',
+        status: '',
+        level: 2
       },
-      profession: []
+      profession: [],
+      title: '',
+      formLoading: false,
+      rules: {
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        pid: [{ required: true, message: '请选择上级分类', trigger: 'blur' }],
+        sort: [{ required: true, message: '请输入排序', trigger: 'blur' }],
+        status: [{ required: true, message: '请选择是否启用', trigger: 'blur' }]
+      }
     }
   },
   created() {
     this.toData()
-    // this.toProfession()
   },
   methods: {
     // 表格数据
@@ -206,18 +216,94 @@ export default {
       this.listQuery.page = 1
       this.toData()
     },
-    handleSave() {},
-    handleUpdate() {},
-    handleDelete(row) {
-      if (row.count > 0) {
-        this.$message.error('下属分类大于0时，不可删除')
-        return false
-      }
+    // 保存信息
+    handleSave() {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          this.title === '添加' ? this.create() : this.update()
+        } else {
+          return false
+        }
+      })
     },
     handleItem(pid) {
       this.tabBar.current = pid
       this.listQuery.pid = pid
       this.toData()
+    },
+    // 点击添加按钮
+    handleCreate() {
+      this.title = '添加'
+      this.reset()
+      this.initValidate()
+      this.dialogVisible = true
+    },
+    // 创建信息
+    async create() {
+      this.formLoading = true
+      await classify_create(this.form)
+      this.$message.success('添加成功')
+      this.listQuery.page = 1
+      this.toData()
+      this.formLoading = false
+      this.dialogVisible = false
+    },
+    // 点击编辑按钮
+    async handleUpdate(row) {
+      this.reset()
+      this.initValidate()
+      this.loading = true
+      this.title = '编辑'
+      const response = await classify_read({ id: row.id })
+      const { id, pid, name, sort, status } = response.data
+      this.form = {
+        id,
+        pid,
+        name,
+        sort,
+        status,
+        level: 2
+      }
+      this.dialogVisible = true
+      this.loading = false
+    },
+    // 更新信息
+    async update() {
+      this.formLoading = true
+      await classify_update(this.form)
+      this.$message.success('更新成功')
+      this.toData()
+      this.formLoading = false
+      this.dialogVisible = false
+    },
+    // 删除信息
+    async handleDelete(row) {
+      if (row.count > 0) {
+        this.$message.error('下属分类大于0时，不可删除')
+        return false
+      }
+      await classify_delete({ id: row.id })
+      this.$message.success('删除成功')
+      this.toData()
+    },
+    // 初始化验证信息
+    initValidate() {
+      this.$nextTick(() => {
+        this.$refs['form'].resetFields()
+      })
+    },
+    // 重置表单
+    reset() {
+      this.form = {
+        pid: '',
+        name: '',
+        sort: '',
+        status: '',
+        level: 2
+      }
+    },
+    toNext(row) {
+      this.$router.push({ path: '/teach/level3', query: { id: row.id, name: row.name }})
     }
   }
 }

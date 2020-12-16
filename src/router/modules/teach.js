@@ -21,6 +21,18 @@ const teachRouter = {
     component: () => import('@/views/teach/Type'),
     name: 'Type',
     meta: { title: '课程班型', noCache: true }
+  }, {
+    path: 'level3',
+    component: () => import('@/views/teach/Level3'),
+    name: 'Level3',
+    meta: { title: '三级学科管理', noCache: true },
+    hidden: true
+  }, {
+    path: 'level4',
+    component: () => import('@/views/teach/Level4'),
+    name: 'Level4',
+    meta: { title: '下属科目', noCache: true },
+    hidden: true
   }]
 }
 

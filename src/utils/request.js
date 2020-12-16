@@ -38,12 +38,20 @@ service.interceptors.response.use(
     return res
   },
   error => {
-    const { message } = error.response.data
+    const { message, code } = error.response.data
     Message({
       message: message,
       type: 'error',
-      duration: 5 * 1000
+      duration: 2 * 1000,
+      onClose() {
+        if (code === 422) {
+          store.dispatch('user/resetToken').then(() => {
+            location.reload()
+          })
+        }
+      }
     })
+
     return Promise.reject(error)
   }
 )
