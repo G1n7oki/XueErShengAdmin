@@ -1,23 +1,5 @@
 <template>
   <div class="app-container">
-    <!-- Filter -->
-    <!-- <el-card class="filter-container">
-      <div class="filter-title">筛选</div>
-      <el-form :inline="true" :model="listQuery">
-        <el-form-item label="学科分类">
-          <el-cascader
-            v-model="listQuery.profession"
-            :options="profession"
-            :props="{ value: 'id', label: 'name', children: 'sub' }"
-            filterable
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card> -->
-    <!-- /Filter -->
     <el-card>
       <!-- Table header -->
       <div class="table-header">
@@ -142,7 +124,6 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { classify_list, classify_create, classify_read, classify_update, classify_delete } from '@/api/teach'
-// import { profession_list } from '@/api/profession'
 export default {
   name: 'Teach',
   components: {
@@ -206,15 +187,6 @@ export default {
       this.list = data
       this.total = total
       this.loading = false
-    },
-    // 专业数据
-    // async toProfession() {
-    //   const profession = await profession_list({ level: 3 })
-    //   this.profession = profession.data
-    // },
-    handleQuery() {
-      this.listQuery.page = 1
-      this.toData()
     },
     // 保存信息
     handleSave() {

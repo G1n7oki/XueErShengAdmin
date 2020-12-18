@@ -39,6 +39,11 @@ const user = {
     component: () => import('@/views/user/Student'),
     name: 'Student',
     meta: { title: '学员用户', noCache: true }
+  }, {
+    path: 'correction',
+    component: () => import('@/views/user/Correction'),
+    name: 'Correction',
+    meta: { title: '题目纠错', noCache: true }
   }]
 }
 
