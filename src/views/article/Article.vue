@@ -92,7 +92,7 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
             <el-button type="danger" size="mini" @click="handleDelete(row)">
@@ -166,15 +166,15 @@ export default {
       this.listQuery.page = 1
       this.toData()
     },
-    // Create
+    // 点击创建
     handleCreate() {
       this.$router.push({ path: '/article/create-article' })
     },
-    // Update
+    // 点击编辑
     handleUpdate(row) {
       this.$router.push({ path: '/article/create-article', query: { id: row.id }})
     },
-    // Delete
+    // 点击删除
     async handleDelete(row) {
       const response = await article_delete({ id: row.id })
       this.$message.success(response.status)

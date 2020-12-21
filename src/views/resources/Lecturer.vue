@@ -151,6 +151,7 @@ export default {
       this.profession = profession.data
     },
     handleQuery() {},
+    // 点击添加讲师
     handleCreate() {
       this.$router.push({ path: '/resources/create-lecturer' })
     }

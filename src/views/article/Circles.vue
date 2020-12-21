@@ -7,15 +7,15 @@
         <el-form-item label="发布时间">
           <el-date-picker
             v-model="listQuery.date"
-            value-format="yyyy-MM-dd"
-            type="daterange"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
           />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="listQuery.nickname" placeholder="发布人昵称搜索" />
+          <el-input v-model="listQuery.search" placeholder="发布人昵称搜索" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -46,12 +46,12 @@
           align="center"
         />
         <el-table-column
-          prop="nickname"
+          prop="username"
           label="发布人昵称"
           align="center"
         />
         <el-table-column
-          prop="mobile"
+          prop="login_tel"
           label="手机号"
           align="center"
         />
@@ -61,17 +61,17 @@
           align="center"
         />
         <el-table-column
-          prop="hit"
+          prop="admire"
           label="点赞数"
           align="center"
         />
         <el-table-column
-          prop="comment"
+          prop="comment_num"
           label="评论数"
           align="center"
         />
         <el-table-column
-          prop="date"
+          prop="created_at"
           label="发布时间"
           align="center"
         />
@@ -97,7 +97,7 @@
         v-show="total > 0"
         :total="total"
         :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
+        :limit.sync="listQuery.per_page"
         @pagination="toData"
       />
       <!-- /Page -->
@@ -127,10 +127,10 @@ export default {
   data() {
     return {
       listQuery: {
-        date: '',
-        nickname: '',
+        date: [],
+        search: '',
         page: 1,
-        limit: 10
+        per_page: 10
       },
       total: 0,
       loading: false,
@@ -143,22 +143,22 @@ export default {
     this.toData()
   },
   methods: {
-    toData() {
+    async toData() {
       this.loading = true
-      circle_list().then(response => {
-        this.list = response.data
-        this.total = this.list.length
-        this.loading = false
-      }).catch(error => {
-        this.list = []
-        this.loading = false
-        console.log(error)
-      })
+      const response = await circle_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
     },
     handleRead() {
       this.dialogVisible = true
     },
-    handleQuery() {}
+    handleQuery() {
+      console.log(this.listQuery.date)
+      this.listQuery.page = 1
+      this.toData()
+    }
   }
 }
 </script>

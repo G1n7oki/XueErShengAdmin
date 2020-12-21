@@ -20,7 +20,7 @@ const article = {
     path: 'create-article',
     component: () => import('@/views/article/CreateArticle'),
     name: 'CreateArticle',
-    meta: { title: '添加文章', noCache: true },
+    meta: { title: '文章信息', noCache: true },
     hidden: true
   }, {
     path: 'discover',
@@ -31,7 +31,7 @@ const article = {
     path: 'create-discover',
     component: () => import('@/views/article/CreateDiscover'),
     name: 'CreateDiscover',
-    meta: { title: '添加发现文章', noCache: true },
+    meta: { title: '发现文章信息', noCache: true },
     hidden: true
   }, {
     path: 'discover-comment',

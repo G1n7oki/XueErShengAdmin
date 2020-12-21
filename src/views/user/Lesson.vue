@@ -3,7 +3,7 @@
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
-        <user-tab-bar :current="2" :id="id" />
+        <user-tab-bar :id="id" :current="2" />
         <el-button type="warning" @click="dialogVisible = true">继续下单</el-button>
       </div>
       <!-- /卡片头 -->

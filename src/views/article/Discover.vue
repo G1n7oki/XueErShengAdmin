@@ -5,15 +5,14 @@
       <div class="filter-title">筛选</div>
       <el-form :inline="true" :model="listQuery">
         <el-form-item label="文章类型">
-          <el-select v-model="listQuery.type" placeholder="请选择">
-            <el-option label="全部" value="0" />
-            <el-option label="咨询" value="1" />
-            <el-option label="活动" value="2" />
-            <el-option label="上进故事" value="2" />
+          <el-select v-model="listQuery.type" clearable placeholder="请选择">
+            <el-option label="资讯" value="1" />
+            <el-option label="活动" value="3" />
+            <el-option label="上进故事" value="4" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="listQuery.value" placeholder="文章标题" />
+          <el-input v-model="listQuery.search" clearable placeholder="文章标题" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -45,17 +44,17 @@
           align="center"
         />
         <el-table-column
-          prop="type"
+          prop="name"
           label="文章类型"
           align="center"
         />
         <el-table-column
-          prop="praise"
+          prop="admire"
           label="点赞数"
           align="center"
         />
         <el-table-column
-          prop="pv"
+          prop="click"
           label="浏览量"
           align="center"
         />
@@ -70,7 +69,7 @@
           align="center"
         />
         <el-table-column
-          prop="date"
+          prop="created_at"
           label="添加时间"
           align="center"
         />
@@ -81,7 +80,7 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
             <el-button type="danger" size="mini" @click="handleDelete(row)">
@@ -96,7 +95,7 @@
         v-show="total > 0"
         :total="total"
         :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
+        :limit.sync="listQuery.per_page"
         @pagination="toData"
       />
       <!-- /Page -->
@@ -106,7 +105,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { listDiscover } from '@/api/article'
+import { discover_list, article_delete } from '@/api/article'
 export default {
   name: 'Discover',
   components: {
@@ -116,9 +115,9 @@ export default {
     return {
       listQuery: {
         type: '',
-        value: '',
+        search: '',
         page: 1,
-        limit: 1
+        per_page: 1
       },
       list: [],
       loading: false,
@@ -129,24 +128,34 @@ export default {
     this.toData()
   },
   methods: {
-    toData() {
+    // 获取列表
+    async toData() {
       this.loading = true
-      listDiscover().then(response => {
-        this.list = response.data
-        this.loading = false
-        this.total = this.list.length
-      }).catch(error => {
-        this.list = []
-        this.loading = false
-        console.log(error)
-      })
+      const response = await discover_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
     },
-    handleQuery() {},
+    // 点击查询
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
+    // 点击创建
     handleCreate() {
       this.$router.push({ path: '/article/create-discover' })
     },
-    handleUpdate() {},
-    handleDelete() {}
+    // 点击更新
+    handleUpdate(row) {
+      this.$router.push({ path: '/article/create-discover', query: { id: row.id }})
+    },
+    // 点击删除
+    async handleDelete(row) {
+      const response = await article_delete({ id: row.id })
+      this.$message.success(response.status)
+      this.toData()
+    }
   }
 }
 </script>

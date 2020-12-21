@@ -151,7 +151,10 @@ export default {
       this.profession = profession.data
     },
     handleQuery() {},
-    handleCreate() {}
+    // 点击添加班主任
+    handleCreate() {
+      this.$router.push({ path: '/resources/create-director' })
+    }
   }
 }
 </script>

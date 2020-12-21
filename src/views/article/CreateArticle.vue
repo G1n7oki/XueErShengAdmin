@@ -23,11 +23,11 @@
           >
             <el-option
               label="考生必看"
-              value="5"
+              :value="5"
             />
             <el-option
               label="报考流程"
-              value="6"
+              :value="6"
             />
           </el-select>
         </el-form-item>
@@ -46,11 +46,11 @@
           <el-select v-model="form.status" placeholder="请选择">
             <el-option
               label="发布"
-              value="1"
+              :value="1"
             />
             <el-option
               label="暂不发布"
-              value="0"
+              :value="0"
             />
           </el-select>
         </el-form-item>
@@ -72,7 +72,7 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
-import { article_create } from '@/api/article'
+import { article_create, article_read, article_update } from '@/api/article'
 import { profession_list } from '@/api/profession'
 export default {
   name: 'CreateArticle',
@@ -82,6 +82,7 @@ export default {
   data() {
     return {
       form: {
+        id: '',
         profession_list: [],
         title: '',
         type: '',
@@ -113,20 +114,41 @@ export default {
     }
   },
   created() {
+    const id = this.$route.query.id
+    this.id = id
+    if (this.id) {
+      this.toInfo()
+    }
     this.toProfession()
   },
   methods: {
+    // 获取文章信息
+    async toInfo() {
+      this.loading = true
+      const info = await article_read({ id: this.id })
+      this.form.id = info.data.id
+      this.form.title = info.data.title
+      this.form.type = info.data.c_id
+      this.form.content = info.data.content
+      this.form.profession_list = info.data.profession_list
+      this.form.status = info.data.status
+      this.form.sort = info.data.sort
+      this.loading = false
+    },
+    // 获取专业数据
     async toProfession() {
       const response = await profession_list({ level: 3 })
       this.profession = response.data
     },
+    // 点击保存
     async handleSave() {
       this.loading = true
       this.form.profession_id = this.form.profession_list[2]
-      const response = await article_create(this.form)
+      const response = this.id ? await article_update(this.form) : await article_create(this.form)
       this.loading = false
       this.$message.success(response.status)
     },
+    // 点击取消
     handleCancel() {
       this.$router.push({ path: '/article/article' })
     }

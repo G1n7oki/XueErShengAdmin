@@ -90,7 +90,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { discover_comment_list } from '@/api/article'
+import { discover_comment_list, discover_comment_delete } from '@/api/article'
 export default {
   name: 'DiscoverComment',
   components: {
@@ -124,7 +124,11 @@ export default {
       this.listQuery.page = 1
       this.toData()
     },
-    handleDelete(row) {}
+    async handleDelete(row) {
+      const response = await discover_comment_delete({ id: row.id })
+      this.$message.success(response.status)
+      this.toData()
+    }
   }
 }
 </script>

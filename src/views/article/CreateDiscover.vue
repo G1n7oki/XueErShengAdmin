@@ -4,6 +4,7 @@
       <div class="title">请填写文章相关信息</div>
       <el-form
         ref="form"
+        v-loading="loading"
         :model="form"
         :rules="rules"
         label-width="80px"
@@ -21,57 +22,60 @@
             placeholder="请选择"
           >
             <el-option
-              label="考生必看"
-              value="1"
-            />
-            <el-option
-              label="报考流程"
-              value="2"
-            />
-            <el-option
-              label="咨询"
-              value="3"
+              label="资讯"
+              :value="1"
             />
             <el-option
               label="活动"
-              value="4"
+              :value="3"
             />
             <el-option
               label="上进故事"
-              value="5"
+              :value="4"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
           <tinymce v-model="form.content" :height="300" />
         </el-form-item>
-        <el-form-item label="是否发布" prop="use">
-          <el-select v-model="form.use" placeholder="请选择">
+        <el-form-item label="是否发布" prop="status">
+          <el-select v-model="form.status" placeholder="请选择">
             <el-option
               label="发布"
-              value="1"
+              :value="1"
             />
             <el-option
               label="暂不发布"
-              value="0"
+              :value="0"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="文章图片" prop="image">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :show-file-list="false"
+            :action="url"
+            list-type="picture-card"
+            :headers="headers"
+            :data="{ type: 1 }"
+            name="image"
+            multiple
+            :file-list="form.image"
+            :limit="9"
+            :before-upload="beforeUpload"
+            :on-preview="handlePreview"
             :on-success="handleUpload"
+            :on-remove="handleRemove"
           >
-            <el-image v-if="form.image" :src="form.image" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            <i class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
           <div>只能上传jpg/png文件，且不超过500kb</div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">保存</el-button>
-          <el-button>取消</el-button>
+          <el-button type="primary" @click="handleSave">保存</el-button>
+          <el-button @click="handleCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -80,6 +84,8 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
+import { url, headers } from '@/api/uplaod'
+import { article_create, article_read, article_update, image_delete } from '@/api/article'
 export default {
   name: 'CreateDiscover',
   components: {
@@ -91,8 +97,8 @@ export default {
         title: '',
         type: '',
         content: '',
-        use: '',
-        image: ''
+        status: '',
+        image: []
       },
       rules: {
         title: [
@@ -104,14 +110,98 @@ export default {
         content: [
           { required: true, message: '请填写文章内容', trigger: 'blur' }
         ],
-        use: [
+        status: [
           { required: true, message: '请选择是否发布', trigger: 'blur' }
         ]
-      }
+      },
+      url: url,
+      headers: headers,
+      dialogVisible: false,
+      dialogImageUrl: '',
+      loading: false,
+      host: ''
+    }
+  },
+  created() {
+    const id = this.$route.query.id
+    this.id = id
+    if (this.id) {
+      this.toInfo()
     }
   },
   methods: {
-    handleUpload() {}
+    // 获取文章信息
+    async toInfo() {
+      this.loading = true
+      const image = []
+      const info = await article_read({ id: this.id })
+      this.form.id = info.data.id
+      this.form.title = info.data.title
+      this.form.type = info.data.c_id
+      this.form.content = info.data.content
+      this.form.status = info.data.status
+      this.host = info.data.imagehost
+      // 处理图片
+      info.data.image.forEach(item => {
+        image.push({
+          name: item.id,
+          url: this.host + item.image_url
+        })
+      })
+      this.form.image = image
+      this.loading = false
+    },
+    // 预览图片
+    handlePreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    // 删除图片
+    async handleRemove(file, fileList) {
+      this.form.list = fileList
+      await image_delete({ id: file.name })
+    },
+    // 图片上传之前
+    beforeUpload(file) {
+      if (file.size > 50000) {
+        this.$message.warning('图片超过500kb')
+        return false
+      }
+    },
+    // 图片上传成功
+    handleUpload(response) {
+      this.form.image.push(response.data.url)
+    },
+    // 点击保存
+    async handleSave() {
+      const image = []
+      this.form.image.forEach(item => {
+        if (!item.name) {
+          image.push(item)
+        }
+      })
+      this.loading = true
+      const response = this.id ? await article_update({
+        id: this.id,
+        title: this.form.title,
+        type: this.form.type,
+        content: this.form.content,
+        status: this.form.status,
+        image
+      }) : await article_create({
+        title: this.form.title,
+        type: this.form.type,
+        content: this.form.content,
+        status: this.form.status,
+        image
+      })
+      this.$message.success(response.status)
+      this.loading = false
+    },
+    // 点击取消
+    handleCancel() {
+      this.$router.push({ path: '/article/discover' })
+    }
   }
 }
 </script>
