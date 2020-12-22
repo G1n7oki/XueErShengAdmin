@@ -47,7 +47,8 @@ const article = {
     path: 'circles-comment',
     component: () => import('@/views/article/CirclesComment'),
     name: 'CirclesComment',
-    meta: { title: '评论列表', noCache: true }
+    meta: { title: '评论列表', noCache: true },
+    hidden: true
   }]
 }
 

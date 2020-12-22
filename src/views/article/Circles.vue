@@ -4,11 +4,11 @@
     <el-card class="filter-container">
       <div class="filter-title">筛选</div>
       <el-form :inline="true" :model="listQuery">
-        <el-form-item label="发布时间">
+        <el-form-item label="开始日期">
           <el-date-picker
-            v-model="listQuery.date"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            type="datetimerange"
+            v-model="date"
+            value-format="yyyy-MM-dd"
+            type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -41,6 +41,7 @@
         size="medium"
       >
         <el-table-column
+          width="100"
           prop="id"
           label="序号"
           align="center"
@@ -59,7 +60,11 @@
           prop="content"
           label="发布内容"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <div class="content">{{ row.content }}</div>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="admire"
           label="点赞数"
@@ -69,7 +74,11 @@
           prop="comment_num"
           label="评论数"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-link type="primary" @click="handleComment(row)">{{ row.comment_num }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="created_at"
           label="发布时间"
@@ -106,10 +115,7 @@
         title="查看内容"
         :visible.sync="dialogVisible"
       >
-        <div class="rich-text-title">
-          最新！2020年江西省高校毕业生“三支一扶”计划招募考试笔试时间确定！
-        </div>
-        <div class="rich-text-content" v-html="nodes" />
+        <div class="rich-text-content">{{ content }}</div>
       </el-dialog>
       <!-- /Dialog -->
     </el-card>
@@ -118,7 +124,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { circle_list } from '@/api/article'
+import { circle_list, article_delete } from '@/api/article'
 export default {
   name: 'Circles',
   components: {
@@ -126,8 +132,11 @@ export default {
   },
   data() {
     return {
+      date: ['', ''],
+      content: '',
       listQuery: {
-        date: [],
+        start: '',
+        end: '',
         search: '',
         page: 1,
         per_page: 10
@@ -135,14 +144,14 @@ export default {
       total: 0,
       loading: false,
       list: [],
-      dialogVisible: false,
-      nodes: '<div style="text-align: center"><div style="text-align: center">同时，我省还公布了艺术、体育类各批次文化录取控制线和专业合格线、资格线。艺术学理论类（含艺术史论、艺术管理等本学科门类所设专业）、戏剧与影视学类（含戏剧学、电影学、戏剧影视文学、广播电视编导、戏剧影视导演、戏剧影视美术设计、录音艺术、播音与主持艺术、动画、影视摄影与制作、影视技术、戏剧教育等本学科门类所设专业，表演除外）以及认可和使用戏剧影视文学（广播电视编导）、播音与主持艺术专业省统考成绩进行录取的本科专业: 393 分。</div><img style="margin-top: 67px;" src="https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png" alt=""></div>'
+      dialogVisible: false
     }
   },
   created() {
     this.toData()
   },
   methods: {
+    // 获取列表数据
     async toData() {
       this.loading = true
       const response = await circle_list(this.listQuery)
@@ -151,23 +160,36 @@ export default {
       this.total = total
       this.loading = false
     },
-    handleRead() {
+    // 点击查看内容
+    handleRead(row) {
+      this.content = row.content
       this.dialogVisible = true
     },
+    // 点击查询
     handleQuery() {
-      console.log(this.listQuery.date)
       this.listQuery.page = 1
       this.toData()
+    },
+    // 点击删除
+    async handleDelete(row) {
+      const response = await article_delete({ id: row.id })
+      this.$message.success(response.status)
+      this.toData()
+    },
+    // 点击评论数
+    handleComment(row) {
+      this.$router.push({ path: '/article/circles-comment', query: { id: row.id }})
     }
   }
 }
 </script>
 
 <style scoped>
-.rich-text-title {
-  font-size: 20px;
-  color: #333;
-  text-align: center;
-  margin-bottom: 66px;
+.content {
+  overflow : hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 </style>

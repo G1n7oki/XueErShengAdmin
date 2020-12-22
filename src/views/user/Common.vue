@@ -37,14 +37,6 @@
     </el-card>
     <!-- 表格 -->
     <el-card>
-      <el-row :gutter="10" style="margin-bottom: 20px">
-        <el-col :span="1">
-          <el-checkbox>全选</el-checkbox>
-        </el-col>
-        <el-col :span="2" :offset="1">
-          <el-link type="primary">批量导出</el-link>
-        </el-col>
-      </el-row>
       <el-table
         v-loading="loading"
         :data="list"

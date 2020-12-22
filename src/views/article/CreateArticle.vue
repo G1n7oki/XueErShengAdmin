@@ -133,6 +133,7 @@ export default {
       this.form.profession_list = info.data.profession_list
       this.form.status = info.data.status
       this.form.sort = info.data.sort
+      console.log(this.form)
       this.loading = false
     },
     // 获取专业数据

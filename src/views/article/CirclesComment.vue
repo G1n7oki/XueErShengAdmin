@@ -14,17 +14,18 @@
         size="medium"
       >
         <el-table-column
+          width="100"
           prop="id"
           label="序号"
           align="center"
         />
         <el-table-column
-          prop="nickname"
+          prop="username"
           label="评论人昵称"
           align="center"
         />
         <el-table-column
-          prop="mobile"
+          prop="login_tel"
           label="手机号"
           align="center"
         />
@@ -34,12 +35,12 @@
           align="center"
         />
         <el-table-column
-          prop="hit"
+          prop="admire"
           label="点赞数"
           align="center"
         />
         <el-table-column
-          prop="date"
+          prop="addtime"
           label="添加时间"
           align="center"
         />
@@ -62,7 +63,7 @@
         v-show="total > 0"
         :total="total"
         :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
+        :limit.sync="listQuery.per_page"
         @pagination="toData"
       />
       <!-- /Page -->
@@ -72,7 +73,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { circle_comment } from '@/api/article'
+import { circle_comment, discover_comment_delete } from '@/api/article'
 export default {
   name: 'CirclesComment',
   components: {
@@ -80,9 +81,10 @@ export default {
   },
   data() {
     return {
+      id: '',
       listQuery: {
         page: 1,
-        limit: 10
+        per_page: 10
       },
       list: [],
       loading: false,
@@ -90,22 +92,26 @@ export default {
     }
   },
   created() {
+    const { id } = this.$route.query
+    this.id = id
     this.toData()
   },
   methods: {
-    toData() {
+    // 获取列表数据
+    async toData() {
       this.loading = true
-      circle_comment().then(response => {
-        this.list = response.data
-        this.total = this.list.length
-        this.loading = false
-      }).catch(error => {
-        this.list = []
-        this.loading = false
-        console.log(error)
-      })
+      const response = await circle_comment({ id: this.id })
+      const { total, data } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
     },
-    handleDelete() {}
+    // 点击删除
+    async handleDelete(row) {
+      const response = await discover_comment_delete({ id: row.id })
+      this.$message.success(response.status)
+      this.toData()
+    }
   }
 }
 </script>

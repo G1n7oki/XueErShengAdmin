@@ -48,8 +48,35 @@ export function classify_delete(data) {
 // 课程班型
 export function class_type_list(query) {
   return request({
-    url: '/teach/type',
+    url: '/teach/course_type',
     method: 'get',
     params: query
+  })
+}
+
+// 添加课程班型
+export function class_type_create(data) {
+  return request({
+    url: '/teach/course_add',
+    method: 'post',
+    data
+  })
+}
+
+// 查看课程班型
+export function class_type_detail(query) {
+  return request({
+    url: '/teach/course_detail',
+    method: 'get',
+    params: query
+  })
+}
+
+// 编辑课程班型
+export function class_type_update(data) {
+  return request({
+    url: '/teach/course_edit',
+    method: 'post',
+    data
   })
 }

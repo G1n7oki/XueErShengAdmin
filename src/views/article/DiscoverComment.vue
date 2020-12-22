@@ -112,6 +112,7 @@ export default {
     this.toData()
   },
   methods: {
+    // 获取列表数据
     async toData() {
       this.loading = true
       const response = await discover_comment_list(this.listQuery)
@@ -120,10 +121,12 @@ export default {
       this.total = total
       this.loading = false
     },
+    // 点击查询
     handleQuery() {
       this.listQuery.page = 1
       this.toData()
     },
+    // 点击删除
     async handleDelete(row) {
       const response = await discover_comment_delete({ id: row.id })
       this.$message.success(response.status)

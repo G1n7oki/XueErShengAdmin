@@ -82,17 +82,18 @@ export function image_delete(data) {
 }
 
 // 圈子列表
-export function circle_list(data) {
+export function circle_list(query) {
   return request({
     url: '/article/circle',
-    method: 'post',
-    data
+    method: 'get',
+    params: query
   })
 }
 
+// 圈子评论列表
 export function circle_comment(query) {
   return request({
-    url: '/circle/comment',
+    url: '/article/circle_comment',
     method: 'get',
     params: query
   })

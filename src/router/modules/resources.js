@@ -12,10 +12,15 @@ const resources = {
     icon: 'clipboard'
   },
   children: [{
-    path: 'material',
-    component: () => import('@/views/resources/Material'),
-    name: 'Material',
-    meta: { title: '素材管理', noCache: true }
+    path: 'video',
+    component: () => import('@/views/resources/Video'),
+    name: 'Video',
+    meta: { title: '视频管理', noCache: true }
+  }, {
+    path: 'chapter',
+    component: () => import('@/views/resources/Chapter'),
+    name: 'Chapter',
+    meta: { title: '章节管理', noCache: true }
   }, {
     path: 'lecturer',
     component: () => import('@/views/resources/Lecturer'),
