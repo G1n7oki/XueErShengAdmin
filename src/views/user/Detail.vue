@@ -3,7 +3,7 @@
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
-        <user-tab-bar :current="3" :id="id" />
+        <user-tab-bar :id="id" :current="3" />
         <el-button type="primary">批量导出</el-button>
       </div>
       <!-- /卡片头 -->
@@ -124,7 +124,7 @@ export default {
       },
       total: 0,
       // 标签
-      tag: ['', 'success', 'info', 'warning', 'danger'],
+      tag: ['', 'success', 'info', 'warning', 'danger']
     }
   },
   created() {

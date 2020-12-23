@@ -200,7 +200,7 @@ export default {
     },
     // 点击查看
     handleCheck(id) {
-      this.$router.push({ path: '/user/info', query: { id } })
+      this.$router.push({ path: '/user/info', query: { id }})
     },
     // 点击开课
     handleOpen() {

@@ -17,6 +17,11 @@ const resources = {
     name: 'Video',
     meta: { title: '视频管理', noCache: true }
   }, {
+    path: 'handout',
+    component: () => import('@/views/resources/Handout'),
+    name: 'Handout',
+    meta: { title: '讲义管理', noCache: true }
+  }, {
     path: 'chapter',
     component: () => import('@/views/resources/Chapter'),
     name: 'Chapter',

@@ -3,7 +3,7 @@
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
-        <user-tab-bar :current="1" :id="id" />
+        <user-tab-bar :id="id" :current="1" />
         <el-button type="primary">重置密码</el-button>
       </div>
       <!-- /卡片头 -->
