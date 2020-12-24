@@ -32,9 +32,6 @@ export default {
         }, {
           id: 2,
           name: '开课信息'
-        }, {
-          id: 3,
-          name: '学习详情'
         }],
         current: 1
       }
@@ -47,8 +44,6 @@ export default {
         case 1: this.$router.push({ path: '/user/info', query: { id: this.id }})
           break
         case 2: this.$router.push({ path: '/user/lesson', query: { id: this.id }})
-          break
-        case 3: this.$router.push({ path: '/user/detail', query: { id: this.id }})
           break
         default:
           break
