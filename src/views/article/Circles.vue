@@ -6,12 +6,16 @@
       <el-form :inline="true" :model="listQuery">
         <el-form-item label="开始日期">
           <el-date-picker
-            v-model="date"
+            v-model="listQuery.start"
             value-format="yyyy-MM-dd"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            type="date"
+          />
+        </el-form-item>
+        <el-form-item label="结束日期">
+          <el-date-picker
+            v-model="listQuery.end"
+            value-format="yyyy-MM-dd"
+            type="date"
           />
         </el-form-item>
         <el-form-item>
@@ -91,7 +95,7 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="primary" size="mini" @click="handleRead(row)">
+            <el-button type="success" size="mini" @click="handleRead(row)">
               查看内容
             </el-button>
             <el-button type="danger" size="mini" @click="handleDelete(row)">

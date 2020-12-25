@@ -12,6 +12,10 @@ import ArticleRouter from './modules/article'
 import TeachRouter from './modules/teach'
 import ResourcesRouter from './modules/resources'
 import CourseRouter from './modules/course'
+import LiveRouter from './modules/live'
+import OrderRouter from './modules/order'
+import IssueRouter from './modules/issue'
+import FeedbackRouter from './modules/feedback'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -102,6 +106,10 @@ export const asyncRoutes = [
   TeachRouter,
   ResourcesRouter,
   CourseRouter,
+  LiveRouter,
+  OrderRouter,
+  IssueRouter,
+  FeedbackRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
