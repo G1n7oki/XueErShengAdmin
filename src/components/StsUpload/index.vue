@@ -33,6 +33,7 @@
 
 <script>
 import { sts } from '@/api/sts'
+import { video_create } from '@/api/resources'
 export default {
   name: 'StsUpload',
   props: {
@@ -79,6 +80,13 @@ export default {
         this.uploader.startUpload()
       }
     },
+    // 取消上传
+    stsStop() {
+      // 然后调用 startUpload 方法, 开始上传
+      if (this.uploader !== null) {
+        this.uploader.stopUpload()
+      }
+    },
     createUploader() {
       const that = this
       //
@@ -102,16 +110,23 @@ export default {
           // console.log("onUploadStarted:" + uploadInfo.file.name + ", endpoint:" + uploadInfo.endpoint + ", bucket:" + uploadInfo.bucket + ", object:" + uploadInfo.object)
         },
         // 文件上传成功
-        onUploadSucceed(uploadInfo) {
-          console.log(uploadInfo.videoId)
+        async onUploadSucceed(uploadInfo) {
+          const response = await video_create({
+            aliyun_id: uploadInfo.videoId,
+            name: uploadInfo.file.name
+          })
+          console.log(response)
           // console.log("onUploadSucceed: " + uploadInfo.file.name + ", endpoint:" + uploadInfo.endpoint + ", bucket:" + uploadInfo.bucket + ", object:" + uploadInfo.object)
         },
         // 文件上传失败
         onUploadFailed(uploadInfo, code, message) {
+          that.$message.error(`${uploadInfo.file.name}上传失败, message: ${message}`)
+          that.stsStop()
           // console.log("onUploadFailed: file:" + uploadInfo.file.name + ",code:" + code + ", message:" + message)
         },
         // 取消文件上传
         onUploadCanceled(uploadInfo, code, message) {
+          console.log('取消文件上传')
           // console.log("Canceled file: " + uploadInfo.file.name + ", code: " + code + ", message:" + message)
         },
         // 文件上传进度，单位：字节, 可以在这个函数中拿到上传进度并显示在页面上
@@ -152,8 +167,17 @@ export default {
         this.fileList = []
         this.complete = false
         this.$emit('complete', this.complete)
-      } else {
-        this.$message.error('还有文件未上传完毕')
+      } else { // 视频未上传完毕
+        this.$confirm('还有文件未上传完毕, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }).then(() => {
+          this.fileList = []
+          this.complete = false
+          this.$emit('complete', this.complete)
+          this.stsStop()
+        }).catch(() => {})
       }
     }
   }
