@@ -3,7 +3,7 @@
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
-        <user-tab-bar :id="id" :current="1" />
+        <user-tab-bar :uid="id" :current="1" />
         <el-button type="primary">重置密码</el-button>
       </div>
       <!-- /卡片头 -->
@@ -158,7 +158,7 @@ export default {
       url,
       headers,
       nation: [],
-      info: { // 个人信息
+      info: {
         realname: '', // 姓名
         idno: '', // 身份证
         sex: '', // 性别
@@ -180,21 +180,20 @@ export default {
     }
   },
   created() {
-    this.id = this.$route.query.id
+    this.id = +this.$route.query.id
     this.nation = nation.data
     this.area = area
     this.toData()
   },
-  // 图片上传需要后台服务器支持
   methods: {
-    // 获取用户信息
+    // Get user info
     async toData() {
       this.loading = true
       const response = await userinfo({ id: this.id })
       this.info = response.data
       this.loading = false
     },
-    // 点击保存
+    // Handle save
     handleSave() {
       console.log(this.info)
     },

@@ -109,7 +109,7 @@
             <el-button type="success" size="mini" @click="handleCheck(row)">
               查看
             </el-button>
-            <el-button type="primary" size="mini" @click="handleOpen">
+            <el-button type="primary" size="mini" @click="handleOpen(row)">
               开课
             </el-button>
           </template>
@@ -125,7 +125,7 @@
       />
     </el-card>
     <!-- 开课 -->
-    <continue :flag="dialogVisible" @close="hide" />
+    <continue :id="uid" :flag="dialogVisible" @close="hide" />
   </div>
 </template>
 
@@ -153,7 +153,8 @@ export default {
       list: [],
       total: 0,
       loading: true,
-      dialogVisible: false
+      dialogVisible: false,
+      uid: 0
     }
   },
   created() {
@@ -191,7 +192,8 @@ export default {
       this.$router.push({ path: '/user/info', query: { id: row.id }})
     },
     // 点击开课
-    handleOpen() {
+    async handleOpen(row) {
+      this.uid = row.id
       this.dialogVisible = true
     },
     hide(value) {

@@ -3,7 +3,7 @@
     <el-card>
       <!-- 卡片头 -->
       <div class="flex-wrap">
-        <user-tab-bar :id="id" :current="2" />
+        <user-tab-bar :uid="id" :current="2" />
         <el-button type="warning" @click="dialogVisible = true">继续下单</el-button>
       </div>
       <!-- /卡片头 -->
@@ -16,72 +16,72 @@
         highlight-current-row
       >
         <el-table-column
-          prop="order"
+          prop="order_num"
           label="订单编号"
           align="center"
         />
         <el-table-column
-          prop="name"
+          prop="goods_name"
           label="商品名称"
           align="center"
         />
         <el-table-column
-          prop="type"
+          prop="order_type"
           label="商品类型"
           align="center"
         >
           <template slot-scope="{row}">
-            <el-tag :type="tag[row.type]">{{ row.type ? '题库' : '课程' }}</el-tag>
+            <span>{{ row.order_type | formatOrderType }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="price"
+          prop="order_amount"
           label="单价"
           align="center"
         >
           <template slot-scope="{row}">
-            <span>￥{{ formatMoney(row.price) }}</span>
+            <span>￥{{ formatMoney(row.order_amount) }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="should"
+          prop="due_amount"
           label="应付金额"
           align="center"
         >
           <template slot-scope="{row}">
-            <span>￥{{ formatMoney(row.should) }}</span>
+            <span>￥{{ formatMoney(row.due_amount) }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="actual"
+          prop="real_amount"
           label="实付金额"
           align="center"
         >
           <template slot-scope="{row}">
-            <span>￥{{ formatMoney(row.actual) }}</span>
+            <span>￥{{ formatMoney(row.real_amount) }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="status"
+          prop="order_status"
           label="订单状态"
           align="center"
         >
           <template slot-scope="{row}">
-            <el-tag :type="tag[row.status]">{{ row.status | formatStatus }}</el-tag>
+            <span>{{ row.order_status | formatOrderStatus }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="time"
+          prop="created_at"
           label="下单时间"
           align="center"
         />
         <el-table-column
-          prop="way"
+          prop="pay_type"
           label="支付方式"
           align="center"
         >
           <template slot-scope="{row}">
-            <el-tag :type="tag[row.way]">{{ row.way | formatWay }}</el-tag>
+            <el-link type="success">{{ row.pay_type | formatPayType }}</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -101,11 +101,11 @@
 </template>
 
 <script>
-import User from '@/api/user.json'
 import UserTabBar from '@/views/user/TabBar'
 import Pagination from '@/components/Pagination'
 import Continue from '@/views/user/Continue'
 import { formatMoney } from '@/utils'
+import { course_info } from '@/api/user'
 export default {
   name: 'Lesson',
   components: {
@@ -114,32 +114,42 @@ export default {
     Continue
   },
   filters: {
-    formatStatus(status) {
-      // 订单状态 0 未支付 1 已支付 2 待支付 3 已退款
+    formatOrderType(type) {
+      switch (type) {
+        case 1:
+          return '课程'
+        case 2:
+          return '直播'
+        case 3:
+          return '试卷'
+        default:
+          return ''
+      }
+    },
+    formatOrderStatus(status) {
       switch (status) {
         case 0:
           return '未支付'
         case 1:
           return '已支付'
         case 2:
-          return '待支付'
-        case 3:
           return '已退款'
+        case 3:
+          return '已取消'
         default:
           return ''
       }
     },
-    formatWay(way) {
-      // 支付方式 1 后台开通 2 余额 3 微信 4 支付宝
-      switch (way) {
+    formatPayType(type) {
+      switch (type) {
         case 1:
-          return '后台开通'
-        case 2:
-          return '余额'
-        case 3:
-          return '微信'
-        case 4:
           return '支付宝'
+        case 2:
+          return '微信'
+        case 3:
+          return '余额'
+        case 4:
+          return '兑换码'
         default:
           return ''
       }
@@ -151,22 +161,25 @@ export default {
       limit: 10,
       loading: true,
       list: [],
-      total: 1,
-      // 标签
-      tag: ['', 'success', 'info', 'warning', 'danger'],
-      dialogVisible: false
+      total: 0,
+      dialogVisible: false,
+      id: 0
     }
   },
   created() {
-    this.id = this.$route.query.id
-
+    this.id = +this.$route.query.id
+    console.log(this.id)
     this.toData()
   },
   methods: {
     formatMoney,
-    // 获取开课信息列表
-    toData() {
-      this.list = User.lesson
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await course_info({ id: this.id })
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
       this.loading = false
     },
     hide(value) {

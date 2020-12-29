@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 获取sts
+// Get sts
 export function sts(query) {
   return request({
     url: '/sts',

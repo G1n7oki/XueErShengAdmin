@@ -14,9 +14,9 @@
 export default {
   name: 'TabBar',
   props: {
-    id: { // 用户id
-      type: String,
-      default: ''
+    uid: { // 用户id
+      type: Number,
+      default: 0
     },
     current: { // 切换卡索引
       type: Number,
@@ -41,9 +41,9 @@ export default {
     // 点击选项卡
     handleTabItem(id) {
       switch (id) {
-        case 1: this.$router.push({ path: '/user/info', query: { id: this.id }})
+        case 1: this.$router.push({ path: '/user/info', query: { id: this.uid }})
           break
-        case 2: this.$router.push({ path: '/user/lesson', query: { id: this.id }})
+        case 2: this.$router.push({ path: '/user/lesson', query: { id: this.uid }})
           break
         default:
           break

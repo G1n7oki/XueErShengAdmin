@@ -16,13 +16,15 @@
       >
         <el-form-item label="专业方向">
           <el-cascader
-            v-model="listQuery.direction"
+            v-model="listQuery.id"
             :options="options"
+            :props="{ value: 'id', label: 'name', children: 'sub' }"
             filterable
+            clearable
           />
         </el-form-item>
         <el-form-item label="商品类型">
-          <el-select v-model="listQuery.type">
+          <el-select v-model="listQuery.type" clearable>
             <el-option label="课程" value="1" />
             <el-option label="题库" value="2" />
           </el-select>
@@ -56,38 +58,22 @@
         style="margin-top: 20px"
       >
         <el-table-column
-          prop="name"
+          prop="goods_name"
           label="商品名称"
           align="center"
         />
         <el-table-column
-          prop="image"
-          label="封面图"
-          align="center"
-        >
-          <template slot-scope="{row}">
-            <el-image
-              style="width: 100px; height: 50px"
-              :src="row.iamge"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="price"
+          prop="order_amount"
           label="商品价格"
           align="center"
-        >
-          <template slot-scope="{row}">
-            <span>￥{{ formatMoney(row.price) }}</span>
-          </template>
-        </el-table-column>
+        />
         <el-table-column
-          prop="type"
+          prop="order_type"
           label="商品类型"
           align="center"
         >
           <template slot-scope="{row}">
-            <el-tag :type="tag[row.type]">{{ row.type ? '题库' : '课程' }}</el-tag>
+            <span>{{ row.order_type | formatOrderType }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -96,7 +82,7 @@
           align="center"
         >
           <template slot-scope="{row}">
-            <el-tag :type="tag[row.status]">{{ row.status ? '已上架' : '未上架' }}</el-tag>
+            <el-tag :type="linkMap[row.status]">{{ row.status ? '已上架' : '未上架' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -124,14 +110,32 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { formatMoney } from '@/utils'
-import User from '@/api/user.json'
-import { area } from '@/utils/area'
+import { course_info } from '@/api/user'
+import { profession_list } from '@/api/profession'
 export default {
   name: 'Continue',
   components: {
     Pagination
   },
+  filters: {
+    formatOrderType(value) {
+      switch (value) {
+        case 1:
+          return '课程'
+        case 2:
+          return '直播'
+        case 3:
+          return '试卷'
+        default:
+          return ''
+      }
+    }
+  },
   props: {
+    id: {
+      type: Number,
+      default: 1
+    },
     flag: {
       type: Boolean,
       default: false
@@ -147,28 +151,40 @@ export default {
         name: ''
       },
       list: [],
-      loading: true,
+      loading: false,
       total: 0,
       options: [],
       dialogVisible: true,
-      tag: ['', 'success', 'info', 'warning', 'danger']
+      linkMap: ['warning', 'success', 'danger', 'info']
+    }
+  },
+  watch: {
+    id(newValue) {
+      this.toData(newValue)
     }
   },
   created() {
-    this.toData()
-    this.options = area
+    this.toProfessionList()
   },
   methods: {
     formatMoney,
-    toData() {
-      this.list = User.continue
-      this.total = this.list.length
+    // Get List
+    async toData(id) {
+      this.loading = true
+      const response = await course_info({ id })
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
       this.loading = false
+    },
+    // Get profession list
+    async toProfessionList() {
+      const response = await profession_list({ level: 3 })
+      this.options = response.data
     },
     handleQuery() {},
     close() {
       this.dialogVisible = true
-
       this.$emit('close', false)
     }
   }

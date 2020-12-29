@@ -361,6 +361,9 @@ export function removeClass(ele, cls) {
  * @param {(Number|String)} n
  */
 export function formatMoney(n) {
+  if (n === null || n === undefined) {
+    n = 0
+  }
   const num = n.toString()
   let decimals = ''
   // 判断是否有小数

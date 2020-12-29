@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 登录
+// Login
 export function login(data) {
   return request({
     url: '/login',
@@ -9,7 +9,7 @@ export function login(data) {
   })
 }
 
-// 获取账号信息
+// Get account info
 export function getInfo(token) {
   return request({
     url: '/info',
@@ -18,7 +18,7 @@ export function getInfo(token) {
   })
 }
 
-// 登出
+// Logout
 export function logout() {
   return request({
     url: '/logout',
@@ -26,7 +26,7 @@ export function logout() {
   })
 }
 
-// 普通用户列表
+// Common list
 export function common_list(query) {
   return request({
     url: '/user/list',
@@ -35,7 +35,7 @@ export function common_list(query) {
   })
 }
 
-// 拉黑、取消拉黑
+// Handle blacklist
 export function user_black(data) {
   return request({
     url: '/user/black',
@@ -44,10 +44,19 @@ export function user_black(data) {
   })
 }
 
-// 个人信息
+// User info
 export function userinfo(query) {
   return request({
     url: '/user/show',
+    method: 'get',
+    params: query
+  })
+}
+
+// Course information
+export function course_info(query) {
+  return request({
+    url: '/user/userorder',
     method: 'get',
     params: query
   })

@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 教学分类
+// Classify list
 export function classify_list(query) {
   return request({
     url: '/teach/index',
@@ -9,7 +9,7 @@ export function classify_list(query) {
   })
 }
 
-// 添加教学分类
+// Create classify
 export function classify_create(data) {
   return request({
     url: '/teach/add',
@@ -18,7 +18,7 @@ export function classify_create(data) {
   })
 }
 
-// 查看教学分类
+// Classify detail
 export function classify_read(query) {
   return request({
     url: '/teach/get',
@@ -27,7 +27,7 @@ export function classify_read(query) {
   })
 }
 
-// 编辑教学分类
+// Update classify
 export function classify_update(data) {
   return request({
     url: '/teach/edit',
@@ -36,7 +36,7 @@ export function classify_update(data) {
   })
 }
 
-// 删除教学分类
+// Delete classify
 export function classify_delete(data) {
   return request({
     url: '/teach/delet',
@@ -45,7 +45,7 @@ export function classify_delete(data) {
   })
 }
 
-// 课程班型
+// Class type list
 export function class_type_list(query) {
   return request({
     url: '/teach/course_type',
@@ -54,7 +54,7 @@ export function class_type_list(query) {
   })
 }
 
-// 添加课程班型
+// Create class type
 export function class_type_create(data) {
   return request({
     url: '/teach/course_add',
@@ -63,7 +63,7 @@ export function class_type_create(data) {
   })
 }
 
-// 查看课程班型
+// Class type detail
 export function class_type_detail(query) {
   return request({
     url: '/teach/course_detail',
@@ -72,7 +72,7 @@ export function class_type_detail(query) {
   })
 }
 
-// 编辑课程班型
+// Update class type
 export function class_type_update(data) {
   return request({
     url: '/teach/course_edit',

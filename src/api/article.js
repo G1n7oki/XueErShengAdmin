@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 文章列表
+// Article list
 export function article_list(query) {
   return request({
     url: '/article/list',
@@ -9,7 +9,7 @@ export function article_list(query) {
   })
 }
 
-// 添加文章
+// Create article
 export function article_create(data) {
   return request({
     url: '/article/create',
@@ -18,7 +18,7 @@ export function article_create(data) {
   })
 }
 
-// 文章删除
+// Delete article
 export function article_delete(data) {
   return request({
     url: '/article/delete',
@@ -27,7 +27,7 @@ export function article_delete(data) {
   })
 }
 
-// 文章编辑
+// Update article
 export function article_update(data) {
   return request({
     url: '/article/edit',
@@ -36,7 +36,7 @@ export function article_update(data) {
   })
 }
 
-// 文章详情
+// Article detail
 export function article_read(query) {
   return request({
     url: '/article/detail',
@@ -45,7 +45,7 @@ export function article_read(query) {
   })
 }
 
-// 发现列表
+// Discover list
 export function discover_list(query) {
   return request({
     url: '/article/discover',
@@ -54,7 +54,7 @@ export function discover_list(query) {
   })
 }
 
-// 发现评论列表
+// Discover comment list
 export function discover_comment_list(query) {
   return request({
     url: '/comments',
@@ -63,7 +63,7 @@ export function discover_comment_list(query) {
   })
 }
 
-// 发现评论删除
+// Delete discover comment
 export function discover_comment_delete(data) {
   return request({
     url: '/article/del_comment',
@@ -72,7 +72,7 @@ export function discover_comment_delete(data) {
   })
 }
 
-// 图片删除
+// Delete image
 export function image_delete(data) {
   return request({
     url: '/article/del_image',
@@ -81,7 +81,7 @@ export function image_delete(data) {
   })
 }
 
-// 圈子列表
+// Circle list
 export function circle_list(query) {
   return request({
     url: '/article/circle',
@@ -90,7 +90,7 @@ export function circle_list(query) {
   })
 }
 
-// 圈子评论列表
+// Circle comment list
 export function circle_comment(query) {
   return request({
     url: '/article/circle_comment',
