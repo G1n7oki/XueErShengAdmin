@@ -75,6 +75,11 @@
           align="center"
         />
         <el-table-column
+          prop="file_name"
+          label="讲义名称"
+          align="center"
+        />
+        <el-table-column
           prop="created_at"
           label="创建时间"
           align="center"
@@ -122,26 +127,33 @@
         :model="form"
         label-width="80px"
       >
-        <el-form-item label="是否试听" prop="name">
-          <el-select v-model="form.category" placeholder="请选择">
+        <el-form-item label="视频名称">
+          <el-input v-model="form.name" placeholder="请填写视频名称" />
+        </el-form-item>
+        <el-form-item label="是否试听">
+          <el-select v-model="form.is_try" placeholder="请选择">
             <el-option label="是" :value="1" />
             <el-option label="否" :value="0" />
           </el-select>
         </el-form-item>
-        <el-form-item label="是否启用" prop="name">
-          <el-select v-model="form.category" placeholder="请选择">
+        <el-form-item label="是否启用">
+          <el-select v-model="form.status" placeholder="请选择">
             <el-option label="是" :value="1" />
             <el-option label="否" :value="0" />
           </el-select>
         </el-form-item>
-        <el-form-item label="选择讲义" prop="name">
-          <el-select v-model="form.category" placeholder="请选择">
-            <el-option label="是" :value="1" />
-            <el-option label="否" :value="0" />
+        <el-form-item label="选择讲义">
+          <el-select v-model="form.file_id" placeholder="请选择">
+            <el-option
+              v-for="file in handout"
+              :key="file.id"
+              :label="file.file_name"
+              :value="file.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSave">保存</el-button>
+          <el-button type="primary" @click="update">保存</el-button>
           <el-button @click="updateDialogVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -153,7 +165,7 @@
 <script>
 import StsUpload from '@/components/StsUpload'
 import Pagination from '@/components/Pagination'
-import { video_list } from '@/api/resources'
+import { video_list, handout_list, video_update } from '@/api/resources'
 export default {
   name: 'Video',
   components: {
@@ -174,13 +186,23 @@ export default {
       createDialogVisible: false,
       updateDialogVisible: false,
       formLoading: false,
-      form: {}
+      form: {
+        id: '',
+        is_try: '',
+        status: '',
+        name: '',
+        file_id: ''
+      },
+      handout: [],
+      count: 0
     }
   },
   created() {
     this.toData()
+    this.toHandoutList()
   },
   methods: {
+    // Get list
     async toData() {
       this.loading = true
       const response = await video_list(this.listQuery)
@@ -189,28 +211,46 @@ export default {
       this.total = total
       this.loading = false
     },
+    // Get handout list
+    async toHandoutList() {
+      const response = await handout_list({
+        type: 'all'
+      })
+      this.handout = response.data
+    },
     // Query list
     handleQuery() {
       this.listQuery.page = 1
       this.toData()
     },
+    // Handle create button
     handleCreate() {
       this.fileList = []
       this.createDialogVisible = true
     },
     // Update dialog show
-    handleUpdate() {
+    handleUpdate(row) {
+      this.form = {
+        id: row.id,
+        is_try: row.is_try,
+        status: row.status,
+        name: row.name,
+        file_id: row.file_id
+      }
       this.updateDialogVisible = true
     },
-    handleDelete() {},
-    handleSave() {},
+    // Update video
+    async update() {
+      this.formLoading = true
+      const response = await video_update(this.form)
+      this.$message.success(response.status)
+      this.formLoading = false
+      this.updateDialogVisible = false
+      this.toData()
+    },
     complete(value) {
       this.createDialogVisible = value
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

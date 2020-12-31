@@ -61,3 +61,12 @@ export function course_info(query) {
     params: query
   })
 }
+
+// vip student list
+export function student_list(query) {
+  return request({
+    url: '/user/applies',
+    method: 'get',
+    params: query
+  })
+}

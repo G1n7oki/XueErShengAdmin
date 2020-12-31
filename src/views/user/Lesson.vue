@@ -96,7 +96,15 @@
       />
       <!-- /分页 -->
     </el-card>
-    <continue :flag="dialogVisible" @close="hide" />
+    <!-- Dialog -->
+    <el-dialog
+      title="开课/继续下单"
+      :visible.sync="dialogVisible"
+      width="80%"
+    >
+      <continue />
+    </el-dialog>
+    <!-- /Dialog -->
   </div>
 </template>
 
@@ -168,7 +176,6 @@ export default {
   },
   created() {
     this.id = +this.$route.query.id
-    console.log(this.id)
     this.toData()
   },
   methods: {
@@ -181,9 +188,6 @@ export default {
       this.list = data
       this.total = total
       this.loading = false
-    },
-    hide(value) {
-      this.dialogVisible = false
     }
   }
 }

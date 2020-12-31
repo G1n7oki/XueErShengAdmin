@@ -5,7 +5,7 @@
       <div class="filter-title">筛选</div>
       <el-form :inline="true">
         <el-form-item>
-          <el-input v-model="listQuery.name" placeholder="视频名称" />
+          <el-input v-model="listQuery.search" placeholder="讲义名称" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -32,82 +32,84 @@
         size="medium"
       >
         <el-table-column
-          prop="title"
-          label="视频名称"
+          type="index"
           align="center"
         />
         <el-table-column
-          prop="name"
-          label="是否启用"
-          align="center"
-        />
-        <el-table-column
-          prop="p_name"
-          label="是否试听"
-          align="center"
-        />
-        <el-table-column
-          prop="sort"
+          prop="file_name"
           label="讲义名称"
+          align="center"
+        />
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
           align="center"
         />
         <el-table-column
           label="操作"
           align="center"
-          width="200"
+          width="100"
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
             <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
-            <el-button type="danger" size="mini" @click="handleDelete(row)">
-              删除
-            </el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- /table -->
+      <!-- Page -->
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.per_page"
+        @pagination="toData"
+      />
+      <!-- /Page -->
     </el-card>
     <!-- Dialog -->
     <el-dialog
       title="添加讲义"
-      :visible.sync="createDialogVisible"
+      :visible.sync="dialogVisible.create"
     >
-      <StsUpload accept=".pdf" @complete="complete" />
+      <el-form>
+        <el-form-item align="center">
+          <el-upload
+            class="upload-demo"
+            drag
+            :action="url"
+            :headers="headers"
+            name="image"
+            :data="{ type: 3 }"
+            multiple
+            :before-upload="beforeUpload"
+            :on-success="successUpload"
+          >
+            <i class="el-icon-upload" />
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div slot="tip" class="el-upload__tip">只能上传PDF文件</div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
     </el-dialog>
     <!-- /Dialog -->
     <!-- Dialog -->
     <el-dialog
-      title="编辑视频"
-      :visible.sync="updateDialogVisible"
+      title="编辑讲义"
+      :visible.sync="dialogVisible.update"
     >
       <el-form
-        ref="form"
-        v-loading="formLoading"
+        v-loading=""
         :model="form"
         label-width="80px"
       >
-        <el-form-item label="是否试听" prop="name">
-          <el-select v-model="form.category" placeholder="请选择">
-            <el-option label="是" :value="1" />
-            <el-option label="否" :value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否启用" prop="name">
-          <el-select v-model="form.category" placeholder="请选择">
-            <el-option label="是" :value="1" />
-            <el-option label="否" :value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="选择讲义" prop="name">
-          <el-select v-model="form.category" placeholder="请选择">
-            <el-option label="是" :value="1" />
-            <el-option label="否" :value="0" />
-          </el-select>
+        <el-form-item label="讲义名称">
+          <el-input v-model="form.name" placeholder="请输入讲义名称" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSave">保存</el-button>
+          <el-button type="primary" @click="update">保存</el-button>
           <el-button @click="updateDialogVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -117,32 +119,89 @@
 </template>
 
 <script>
-import StsUpload from '@/components/StsUpload'
+import { url, headers } from '@/api/uplaod'
+import { handout_list, handout_create, handout_update } from '@/api/resources'
+import Pagination from '@/components/Pagination'
 export default {
   name: 'Handout',
   components: {
-    StsUpload
+    Pagination
   },
   data() {
     return {
-      listQuery: {},
+      url,
+      headers,
+      listQuery: {
+        search: '',
+        page: 1,
+        per_page: 10
+      },
       loading: false,
       list: [],
-      createDialogVisible: true,
-      updateDialogVisible: false,
-      formLoading: false,
-      form: {}
+      total: 0,
+      dialogVisible: {
+        create: false,
+        update: false
+      },
+      form: {
+        id: '',
+        name: ''
+      },
+      formLoading: false
     }
   },
+  created() {
+    this.toData()
+  },
   methods: {
-    handleQuery() {},
-    handleCreate() {},
-    handleUpdate() {},
-    handleDelete() {},
-    complete(value) {
-      this.createDialogVisible = value
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await handout_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
     },
-    handleSave() {}
+    // Query list
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
+    handleCreate() {
+      this.dialogVisible.create = true
+    },
+    // Handle update button
+    handleUpdate(row) {
+      this.form = {
+        id: row.id,
+        name: row.file_name
+      }
+      this.dialogVisible.update = true
+    },
+    // Update handout
+    async update() {
+      this.formLoading = true
+      const response = await handout_update(this.form)
+      this.$message.success(response.status)
+      this.dialogVisible.update = false
+      this.formLoading = false
+      this.toData()
+    },
+    // Restricted file type
+    beforeUpload(file) {
+      if (file.type !== 'application/pdf') {
+        this.$message.error('只能上传PDF文件')
+        return false
+      }
+    },
+    // Upload success
+    async successUpload(res, file) {
+      await handout_create({
+        src: res.data.host_url,
+        file_name: file.name
+      })
+    }
   }
 }
 </script>

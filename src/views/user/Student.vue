@@ -32,7 +32,6 @@
       <div class="table-header">
         <div class="left">
           <div class="name">学员列表</div>
-          <el-link type="success">批量导出</el-link>
         </div>
         <el-button type="primary" @click="dialogVisible = true">开通专业</el-button>
       </div>
@@ -47,22 +46,21 @@
         size="medium"
       >
         <el-table-column
-          prop="id"
-          label="序号"
+          type="index"
           align="center"
         />
         <el-table-column
-          prop="nickname"
+          prop="username"
           label="用户昵称"
           align="center"
         />
         <el-table-column
-          prop="mobile"
+          prop="login_tel"
           label="手机号"
           align="center"
         />
         <el-table-column
-          prop="direction"
+          prop="profession_id"
           label="专业方向"
           align="center"
         />
@@ -207,8 +205,8 @@
 </template>
 
 <script>
-import User from '@/api/user.json'
 import Pagination from '@/components/Pagination'
+import { student_list } from '@/api/user'
 export default {
   name: 'Student',
   components: {
@@ -223,7 +221,7 @@ export default {
         limit: 10
       },
       list: [],
-      loading: true,
+      loading: false,
       total: 0,
       dialogVisible: false,
       formData: {
@@ -245,9 +243,12 @@ export default {
     this.toData()
   },
   methods: {
-    toData() {
-      this.list = User.student
-      this.total = User.student.length
+    async toData() {
+      this.loading = true
+      const response = await student_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
       this.loading = false
     },
     handleQuery() {},

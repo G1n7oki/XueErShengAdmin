@@ -125,7 +125,15 @@
       />
     </el-card>
     <!-- 开课 -->
-    <continue :id="uid" :flag="dialogVisible" @close="hide" />
+    <!-- Dialog -->
+    <el-dialog
+      title="开课/继续下单"
+      :visible.sync="dialogVisible"
+      width="80%"
+    >
+      <continue :uid="uid" />
+    </el-dialog>
+    <!-- Dialog -->
   </div>
 </template>
 
@@ -195,9 +203,6 @@ export default {
     async handleOpen(row) {
       this.uid = row.id
       this.dialogVisible = true
-    },
-    hide(value) {
-      this.dialogVisible = false
     }
   }
 }
