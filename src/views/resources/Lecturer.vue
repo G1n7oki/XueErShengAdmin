@@ -4,7 +4,7 @@
     <el-card class="filter-container">
       <div class="filter-title">筛选</div>
       <el-form :inline="true">
-        <el-form-item label="选择学科">
+        <!--        <el-form-item label="选择学科">
           <el-cascader
             v-model="listQuery.id"
             :options="profession"
@@ -12,15 +12,15 @@
             filterable
             clearable
           />
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="是否启用">
           <el-select v-model="listQuery.status" placeholder="请选择" clearable>
-            <el-option label="启用" value="5" />
-            <el-option label="禁用" value="6" />
+            <el-option label="启用" value="1" />
+            <el-option label="禁用" value="0" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="listQuery.name" placeholder="讲师名称" />
+          <el-input v-model="listQuery.search" placeholder="讲师名称" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -47,58 +47,46 @@
         size="medium"
       >
         <el-table-column
-          prop="title"
+          prop="id"
           label="ID"
           align="center"
         />
         <el-table-column
-          prop="name"
+          prop="image"
           label="讲师头像"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-image :src="row.image">
+              <div slot="placeholder" class="image-slot">
+                <i class="el-icon-loading" />
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="p_name"
+          prop="name"
           label="讲师名称"
           align="center"
         />
         <el-table-column
-          prop="sort"
-          label="性别"
-          align="center"
-        />
-        <el-table-column
           prop="status"
-          label="授课学科"
-          align="center"
-        />
-        <el-table-column
-          prop="click"
-          label="手机号码"
-          align="center"
-        />
-        <el-table-column
-          prop="created_at"
           label="状态"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-link :type="linkMap[row.status]" :underline="false">{{ row.status === 1 ? '启用' : '禁用' }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           align="center"
-          width="200"
+          width="100"
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
             <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
-            </el-button>
-            <el-button type="info" size="mini" @click="handleDelete(row)">
-              禁用
-            </el-button>
-            <el-button type="primary" size="mini" @click="handleDelete(row)">
-              启用
-            </el-button>
-            <el-button type="danger" size="mini" @click="handleDelete(row)">
-              删除
             </el-button>
           </template>
         </el-table-column>
@@ -120,6 +108,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { profession_list } from '@/api/profession'
+import { lecturer_list } from '@/api/resources'
 export default {
   name: 'Lecturer',
   components: {
@@ -128,8 +117,7 @@ export default {
   data() {
     return {
       listQuery: {
-        id: '',
-        name: '',
+        search: '',
         status: '',
         page: 1,
         per_page: 10
@@ -137,23 +125,41 @@ export default {
       profession: [],
       loading: false,
       list: [],
-      total: 1
+      total: 0,
+      linkMap: ['danger', '']
     }
   },
   created() {
+    this.toData()
     this.toProfession()
   },
   methods: {
-    toData() {},
-    // 获取专业数据
+    // Get lecturer list
+    async toData() {
+      this.loading = true
+      const response = await lecturer_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
+    },
+    // Get professional list
     async toProfession() {
       const profession = await profession_list({ level: 3 })
       this.profession = profession.data
     },
-    handleQuery() {},
-    // 点击添加讲师
+    // Query list
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
+    // Handle create button
     handleCreate() {
       this.$router.push({ path: '/resources/create-lecturer' })
+    },
+    // Handle update button
+    handleUpdate(row) {
+      this.$router.push({ path: '/resources/create-lecturer', query: { id: row.id }})
     }
   }
 }

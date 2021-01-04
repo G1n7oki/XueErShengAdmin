@@ -73,6 +73,7 @@
     <el-dialog
       title="添加讲义"
       :visible.sync="dialogVisible.create"
+      @close="close"
     >
       <el-form>
         <el-form-item align="center">
@@ -110,7 +111,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="update">保存</el-button>
-          <el-button @click="updateDialogVisible = false">取消</el-button>
+          <el-button @click="dialogVisible.update = false">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -201,6 +202,10 @@ export default {
         src: res.data.host_url,
         file_name: file.name
       })
+    },
+    // Close create dialog
+    close() {
+      this.toData()
     }
   }
 }

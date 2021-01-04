@@ -33,7 +33,6 @@ export function handout_list(query) {
     params: query
   })
 }
-
 // Handout into the database
 export function handout_create(data) {
   return request({
@@ -42,7 +41,6 @@ export function handout_create(data) {
     data
   })
 }
-
 // Update handout
 export function handout_update(data) {
   return request({
@@ -56,6 +54,63 @@ export function handout_update(data) {
 export function chapter_list(query) {
   return request({
     url: '/chapter/index',
+    method: 'get',
+    params: query
+  })
+}
+// Update chapter
+export function chapter_update(data) {
+  return request({
+    url: '/chapter/edit',
+    method: 'post',
+    data
+  })
+}
+// Update chapter video
+export function chapter_video_update(data) {
+  return request({
+    url: '/chapter/video',
+    method: 'post',
+    data
+  })
+}
+// Create chapter
+export function chapter_create(data) {
+  return request({
+    url: '/chapter/add',
+    method: 'post',
+    data
+  })
+}
+
+// Lecturer list
+export function lecturer_list(query) {
+  return request({
+    url: '/teacher/index',
+    method: 'get',
+    params: query
+  })
+}
+// Create lecturer
+export function lecturer_create(data) {
+  return request({
+    url: '/teacher/add',
+    method: 'post',
+    data
+  })
+}
+// Update lecturer
+export function lecturer_update(data) {
+  return request({
+    url: '/teacher/edit',
+    method: 'post',
+    data
+  })
+}
+// Lecturer detail
+export function lecturer_detail(query) {
+  return request({
+    url: '/teacher/details',
     method: 'get',
     params: query
   })

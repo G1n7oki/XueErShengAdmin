@@ -143,7 +143,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="选择讲义">
-          <el-select v-model="form.file_id" placeholder="请选择">
+          <el-select
+            v-model="form.file_id"
+            filterable
+            placeholder="请选择"
+          >
             <el-option
               v-for="file in handout"
               :key="file.id"
