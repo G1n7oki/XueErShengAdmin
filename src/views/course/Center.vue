@@ -51,22 +51,30 @@
         size="medium"
       >
         <el-table-column
-          prop="title"
+          prop="id"
           label="ID"
           align="center"
         />
         <el-table-column
-          prop="name"
+          prop="cover"
           label="封面"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-image :src="row.cover" style="max-width: 100px">
+              <div slot="placeholder" class="image-slot">
+                <i class="el-icon-loading" />
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="p_name"
+          prop="title"
           label="课程名称"
           align="center"
         />
         <el-table-column
-          prop="sort"
+          prop="teacher_id"
           label="老师名称"
           align="center"
         />
@@ -76,22 +84,26 @@
           align="center"
         />
         <el-table-column
-          prop=""
+          prop="price"
           label="价格"
           align="center"
         />
         <el-table-column
-          prop="created_at"
+          prop="video_num"
           label="课时"
           align="center"
         />
         <el-table-column
-          prop="created_at"
+          prop="status"
           label="是否上架"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-link :type="linkMap[row.status]" :underline="false">{{ row.status === 1 ? '启用' : '禁用' }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="created_at"
+          prop="sort"
           label="排序"
           align="center"
         />
@@ -103,16 +115,10 @@
         <el-table-column
           label="操作"
           align="center"
-          width="200"
+          width="150"
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="info" size="mini" @click="handleUpdate(row)">
-              下架
-            </el-button>
-            <el-button type="primary" size="mini" @click="handleDelete(row)">
-              上架
-            </el-button>
             <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
@@ -139,6 +145,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { profession_list } from '@/api/profession'
+import { course_list } from '@/api/course'
 export default {
   name: 'Center',
   components: {
@@ -154,7 +161,8 @@ export default {
       id: '',
       loading: '',
       list: [],
-      total: 0
+      total: 0,
+      linkMap: ['danger', '']
     }
   },
   created() {
@@ -162,8 +170,16 @@ export default {
     this.toProfession()
   },
   methods: {
-    toData() {},
-    // 获取专业数据
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await course_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
+    },
+    // Get profession list
     async toProfession() {
       const profession = await profession_list({ level: 3 })
       this.profession = profession.data

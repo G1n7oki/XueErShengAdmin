@@ -206,7 +206,9 @@ export default {
     // Get video list
     async toVideoList() {
       const response = await video_list({
-        type: 'all'
+        type: 'all',
+        page: 1,
+        per_page: 99999
       })
       this.video = response.data.data
     },

@@ -57,7 +57,7 @@
           align="center"
         >
           <template slot-scope="{row}">
-            <el-image :src="row.image">
+            <el-image :src="row.image" style="max-width: 100px">
               <div slot="placeholder" class="image-slot">
                 <i class="el-icon-loading" />
               </div>
