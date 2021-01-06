@@ -115,3 +115,36 @@ export function lecturer_detail(query) {
     params: query
   })
 }
+
+// Director list
+export function director_list(query) {
+  return request({
+    url: '/class/index',
+    method: 'get',
+    params: query
+  })
+}
+// Create director
+export function director_create(data) {
+  return request({
+    url: '/class/add',
+    method: 'post',
+    data
+  })
+}
+// Update director
+export function director_update(data) {
+  return request({
+    url: '/class/edit',
+    method: 'post',
+    data
+  })
+}
+// Director detail
+export function director_detail(query) {
+  return request({
+    url: '/class/details',
+    method: 'get',
+    params: query
+  })
+}

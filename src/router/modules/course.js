@@ -23,7 +23,7 @@ const course = {
     meta: { title: '课程信息', noCache: true }
   }, {
     path: 'course-catalog',
-    component: () => import('@/views/course/CourseInfo'),
+    component: () => import('@/views/course/CourseCatalog'),
     name: 'CourseCatalog',
     meta: { title: '课程目录', noCache: true }
   }, {

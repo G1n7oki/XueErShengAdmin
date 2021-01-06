@@ -21,8 +21,9 @@
             :action="url"
             :headers="headers"
             name="image"
-            :data="{ type: 1 }"
+            :data="{ type: 4 }"
             :show-file-list="false"
+            :before-upload="beforeUpload"
             :on-success="handleUpload"
           >
             <el-image v-if="form.image" :src="form.image" class="avatar" />
@@ -98,6 +99,14 @@ export default {
     async toProfession() {
       const profession = await profession_list({ level: 3 })
       this.profession = profession.data
+    },
+    // Limit upload type
+    beforeUpload(file) {
+      const isImage = file.type === 'image/jepg' || file.type === 'image/png'
+      if (!isImage) {
+        this.$message.error('只能上传图片格式的文件!')
+      }
+      return isImage
     },
     // Image upload
     handleUpload(res) {
