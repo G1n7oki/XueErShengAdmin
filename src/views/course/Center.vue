@@ -14,16 +14,16 @@
           />
         </el-form-item>
         <el-form-item label="是否上架">
-          <el-select v-model="listQuery.source" clearable>
+          <el-select v-model="listQuery.status" clearable>
             <el-option label="是" value="1" />
             <el-option label="否" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-input
-            v-model="listQuery.value"
+            v-model="listQuery.search"
             clearable
-            placeholder="课程名称 / 老师名字"
+            placeholder="课程名称"
           />
         </el-form-item>
         <el-form-item>
@@ -74,12 +74,12 @@
           align="center"
         />
         <el-table-column
-          prop="teacher_id"
+          prop="teacher_name"
           label="老师名称"
           align="center"
         />
         <el-table-column
-          prop="status"
+          prop="name"
           label="所属科目"
           align="center"
         />
@@ -99,7 +99,7 @@
           align="center"
         >
           <template slot-scope="{row}">
-            <el-link :type="linkMap[row.status]" :underline="false">{{ row.status === 1 ? '启用' : '禁用' }}</el-link>
+            <el-link :type="linkMap[row.status]" :underline="false">{{ row.status === 1 ? '是' : '否' }}</el-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -115,15 +115,12 @@
         <el-table-column
           label="操作"
           align="center"
-          width="150"
+          width="100"
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
             <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
-            </el-button>
-            <el-button type="danger" size="mini" @click="handleDelete(row)">
-              删除
             </el-button>
           </template>
         </el-table-column>
@@ -155,7 +152,10 @@ export default {
     return {
       listQuery: {
         page: 1,
-        per_page: 10
+        per_page: 10,
+        profession: '',
+        status: '',
+        search: ''
       },
       profession: [],
       id: '',
@@ -181,13 +181,23 @@ export default {
     },
     // Get profession list
     async toProfession() {
-      const profession = await profession_list({ level: 3 })
+      const profession = await profession_list({ level: 4 })
       this.profession = profession.data
     },
-    handleQuery() {},
-    handleCreate() {},
-    handleUpdate() {},
-    handleDelete() {}
+    // Query list
+    handleQuery() {
+      this.listQuery.profession = this.id[3] || ''
+      this.listQuery.page = 1
+      this.toData()
+    },
+    // Handle create button
+    handleCreate() {
+      this.$router.push({ path: '/course/course-info' })
+    },
+    // Handle update button
+    handleUpdate(row) {
+      this.$router.push({ path: '/course/course-info', query: { id: row.id }})
+    }
   }
 }
 </script>

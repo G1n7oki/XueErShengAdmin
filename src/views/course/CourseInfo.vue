@@ -11,7 +11,7 @@
       >
         <el-form-item label="课程名称" prop="title">
           <el-input
-            v-model="form.name"
+            v-model="form.title"
             placeholder="课程名称"
           />
         </el-form-item>
@@ -26,7 +26,7 @@
             :before-upload="beforeUpload"
             :on-success="successUpload"
           >
-            <el-image v-if="form.head" :src="form.head" class="avatar" />
+            <el-image v-if="form.cover" :src="form.cover" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
           <div>建议尺寸200*200px;不超过2M; 图片格式支持png,jpg</div>
@@ -39,42 +39,54 @@
           />
         </el-form-item>
         <el-form-item label="课程班型" prop="title">
-          <el-select v-model="form.profession" clearable>
-            <el-option label="是" value="1" />
-            <el-option label="否" value="2" />
+          <el-select v-model="form.category" clearable>
+            <el-option
+              v-for="type in types"
+              :key="type.id"
+              :label=" type.type + ' - ' + type.name"
+              :value="type.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="现价" prop="title">
           <el-input
-            v-model="form.name"
+            v-model="form.price"
             placeholder="现价"
           />
         </el-form-item>
         <el-form-item label="原价" prop="title">
           <el-input
-            v-model="form.name"
+            v-model="form.virtual_price"
             placeholder="原价"
           />
         </el-form-item>
         <el-form-item label="课程有效期" prop="title">
           <el-input
-            v-model="form.name"
+            v-model="form.validity"
             placeholder="课程有效期 单位: 天（有效期从学员购买之日起开始计算）"
           />
         </el-form-item>
-        <el-form-item label="课程介绍" prop="title">
-          <tinymce v-model="form.content" :height="300" />
-        </el-form-item>
-        <el-form-item label="讲师" prop="title">
-          <el-select v-model="form.profession" clearable>
-            <el-option label="是" value="1" />
-            <el-option label="否" value="2" />
+        <el-form-item label="状态" prop="title">
+          <el-select v-model="form.status" clearable>
+            <el-option label="上架" :value="1" />
+            <el-option label="下架" :value="0" />
           </el-select>
         </el-form-item>
-        <el-form-item label="讲义" prop="title">
-          <el-select v-model="form.profession" clearable>
-            <el-option label="是" value="1" />
-            <el-option label="否" value="2" />
+        <el-form-item label="课程介绍" prop="title">
+          <tinymce v-model="form.details" :height="300" />
+        </el-form-item>
+        <el-form-item label="讲师" prop="title">
+          <el-select
+            v-model="form.teacher_id"
+            clearable
+            filterable
+          >
+            <el-option
+              v-for="lecturer in lecturers"
+              :key="lecturer.id"
+              :label="lecturer.name"
+              :value="lecturer.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -89,6 +101,8 @@
 <script>
 import { profession_list } from '@/api/profession'
 import { url, headers } from '@/api/uplaod'
+import { course_create, course_type, course_detail, course_update } from '@/api/course'
+import { lecturer_list } from '@/api/resources'
 import Tinymce from '@/components/Tinymce'
 export default {
   name: 'CourseInfo',
@@ -100,20 +114,60 @@ export default {
       url,
       headers,
       loading: false,
-      form: {},
+      form: {
+        id: '',
+        title: '',
+        cover: '',
+        virtual_price: '',
+        price: '',
+        teacher_id: '',
+        details: '',
+        category: '',
+        validity: ''
+      },
       rules: {},
-      profession: []
+      profession: [],
+      types: [],
+      lecturers: [],
+      category: '',
+      id: ''
     }
   },
   created() {
     this.toProfession()
+    this.toCourseType()
+    this.toLecturerList()
+    this.id = this.$route.query.id
+    if (!this.id) {
+      return
+    }
+    this.init()
   },
   methods: {
-    handleCreate() {},
+    // init
+    async init() {
+      this.loading = true
+      const response = await course_detail({ id: this.id })
+      this.form = response.data
+      this.loading = false
+    },
     // Get profession list
     async toProfession() {
       const profession = await profession_list({ level: 4 })
       this.profession = profession.data
+    },
+    // Get course type list
+    async toCourseType() {
+      const response = await course_type()
+      response.data.map(item => {
+        item.type = item.category === 1 ? '全科' : '单科'
+      })
+      this.types = response.data
+    },
+    // Get lecturer list
+    async toLecturerList() {
+      const response = await lecturer_list({ type: 'all' })
+      this.lecturers = response.data
     },
     // Limit upload type
     beforeUpload(file) {
@@ -126,7 +180,25 @@ export default {
     // Cover upload
     successUpload(res) {
       const { host_url } = res.data
-      this.form.head = host_url
+      this.form.cover = host_url
+    },
+    // Create course
+    async create() {
+      const response = await course_create(this.form)
+      this.$message.success(response.status)
+    },
+    // Update course
+    async update() {
+      const response = await course_update(this.form)
+      this.$message.success(response.status)
+    },
+    // Handle create button
+    handleCreate() {
+      this.id ? this.update() : this.create()
+    },
+    // Handle cancle button
+    handleCancle() {
+      this.$router.push({ path: '/course/center' })
     }
   }
 }
