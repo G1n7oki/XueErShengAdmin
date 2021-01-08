@@ -16,7 +16,8 @@ import LiveRouter from './modules/live'
 import OrderRouter from './modules/order'
 import IssueRouter from './modules/issue'
 import FeedbackRouter from './modules/feedback'
-// import CooperationRouter from './modules/cooperation'
+import ConsciouslyRouter from './modules/consciously'
+import CooperationRouter from './modules/cooperation'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -111,7 +112,8 @@ export const asyncRoutes = [
   OrderRouter,
   IssueRouter,
   FeedbackRouter,
-  // CooperationRouter,
+  ConsciouslyRouter,
+  CooperationRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

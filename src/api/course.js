@@ -33,6 +33,24 @@ export function course_update(data) {
   })
 }
 
+// Course comment list
+export function course_comment(query) {
+  return request({
+    url: '/course/judge',
+    method: 'get',
+    params: query
+  })
+}
+
+// Delete course comment
+export function comment_delete(data) {
+  return request({
+    url: '/course/judge_del',
+    method: 'post',
+    data
+  })
+}
+
 export function course_type(query) {
   return request({
     url: '/course/course_type',

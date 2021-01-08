@@ -21,8 +21,9 @@
       <!-- Table header -->
       <div class="table-header">
         <div class="left">
-          <div class="name">评价列表</div>
+          <div class="name">计划列表</div>
         </div>
+        <el-button type="primary" @click="handleCreate">添加报考计划</el-button>
       </div>
       <!-- /Table header -->
       <!-- table -->
@@ -35,37 +36,37 @@
         size="medium"
       >
         <el-table-column
-          type="index"
+          prop="id"
+          label="计划ID"
           align="center"
         />
         <el-table-column
           prop="title"
-          label="课程名称"
+          label="计划名称"
           align="center"
         />
         <el-table-column
-          prop="username"
-          label="用户昵称"
+          prop="teacher_name"
+          label="报考开始时间"
           align="center"
         />
         <el-table-column
-          prop="login_tel"
-          label="手机号"
+          prop="name"
+          label="报考结束时间"
           align="center"
         />
         <el-table-column
-          prop="mark"
-          label="评价分数"
+          prop="status"
+          label="是否启用"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-link :type="linkMap[row.status]" :underline="false">{{ row.status === 1 ? '是' : '否' }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="content"
-          label="评论内容"
-          align="center"
-        />
-        <el-table-column
-          prop="add_time"
-          label="添加时间"
+          prop="video_num"
+          label="创建时间"
           align="center"
         />
         <el-table-column
@@ -75,8 +76,11 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="danger" size="mini" @click="handleDelete(row)">
-              删除
+            <el-button type="success" size="mini" @click="handleUpdate(row)">
+              修改
+            </el-button>
+            <el-button type="success" size="mini" @click="handleDetail(row)">
+              详情
             </el-button>
           </template>
         </el-table-column>
@@ -97,9 +101,8 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import { course_comment, comment_delete } from '@/api/course'
 export default {
-  name: 'Evaluate',
+  name: 'Plan',
   components: {
     Pagination
   },
@@ -110,36 +113,18 @@ export default {
         per_page: 10,
         search: ''
       },
-      id: '',
-      loading: false,
+      loading: '',
       list: [],
-      total: 0
+      total: 0,
+      linkMap: ['danger', '']
     }
-  },
-  created() {
-    this.toData()
   },
   methods: {
-    // Get list
-    async toData() {
-      this.loading = true
-      const response = await course_comment(this.listQuery)
-      const { data, total } = response.data
-      this.list = data
-      this.total = total
-      this.loading = false
-    },
-    // Query list
-    handleQuery() {
-      this.listQuery.page = 1
-      this.toData()
-    },
-    // Delete info
-    async handleDelete(row) {
-      const response = await comment_delete({ id: row.id })
-      this.$message.success(response.status)
-      this.toData()
-    }
+    toData() {},
+    handleQuery() {},
+    handleCreate() {},
+    handleUpdate() {},
+    handleDetail(row) {}
   }
 }
 </script>

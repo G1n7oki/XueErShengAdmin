@@ -89,9 +89,24 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="关联章节" prop="title">
+          <el-select
+            v-model="form.chapter"
+            clearable
+            filterable
+            multiple
+          >
+            <el-option
+              v-for="chapter in chapters"
+              :key="chapter.id"
+              :label="chapter.name"
+              :value="chapter.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleCreate">立即添加</el-button>
-          <el-button>取消</el-button>
+          <el-button @click="handleCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -102,7 +117,7 @@
 import { profession_list } from '@/api/profession'
 import { url, headers } from '@/api/uplaod'
 import { course_create, course_type, course_detail, course_update } from '@/api/course'
-import { lecturer_list } from '@/api/resources'
+import { lecturer_list, chapter_list } from '@/api/resources'
 import Tinymce from '@/components/Tinymce'
 export default {
   name: 'CourseInfo',
@@ -123,12 +138,14 @@ export default {
         teacher_id: '',
         details: '',
         category: '',
-        validity: ''
+        validity: '',
+        chapter: ''
       },
       rules: {},
       profession: [],
       types: [],
       lecturers: [],
+      chapters: [],
       category: '',
       id: ''
     }
@@ -137,6 +154,7 @@ export default {
     this.toProfession()
     this.toCourseType()
     this.toLecturerList()
+    this.toChapterList()
     this.id = this.$route.query.id
     if (!this.id) {
       return
@@ -169,6 +187,12 @@ export default {
       const response = await lecturer_list({ type: 'all' })
       this.lecturers = response.data
     },
+    // Get Chapter list
+    async toChapterList() {
+      const response = await chapter_list({ type: 'all' })
+      console.log(response)
+      this.chapters = response.data
+    },
     // Limit upload type
     beforeUpload(file) {
       const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -196,8 +220,8 @@ export default {
     handleCreate() {
       this.id ? this.update() : this.create()
     },
-    // Handle cancle button
-    handleCancle() {
+    // Handle cancel button
+    handleCancel() {
       this.$router.push({ path: '/course/center' })
     }
   }
