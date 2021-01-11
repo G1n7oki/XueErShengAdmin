@@ -20,7 +20,8 @@ const course = {
     path: 'course-info',
     component: () => import('@/views/course/CourseInfo'),
     name: 'CourseInfo',
-    meta: { title: '课程信息', noCache: true }
+    meta: { title: '课程信息', noCache: true },
+    hidden: true
   }, {
     path: 'evaluate',
     component: () => import('@/views/course/Evaluate'),

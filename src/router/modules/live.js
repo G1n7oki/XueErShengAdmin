@@ -30,7 +30,8 @@ const live = {
     path: 'create-live',
     component: () => import('@/views/live/CreateLive'),
     name: 'CreateLive',
-    meta: { title: '添加直播课', noCache: true }
+    meta: { title: '直播课信息', noCache: true },
+    hidden: true
   }]
 }
 

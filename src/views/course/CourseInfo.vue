@@ -151,47 +151,34 @@ export default {
     }
   },
   created() {
-    this.toProfession()
-    this.toCourseType()
-    this.toLecturerList()
-    this.toChapterList()
     this.id = this.$route.query.id
-    if (!this.id) {
-      return
-    }
     this.init()
   },
   methods: {
     // init
     async init() {
       this.loading = true
-      const response = await course_detail({ id: this.id })
-      this.form = response.data
-      this.loading = false
-    },
-    // Get profession list
-    async toProfession() {
+      // Get profession list
       const profession = await profession_list({ level: 4 })
       this.profession = profession.data
-    },
-    // Get course type list
-    async toCourseType() {
-      const response = await course_type()
-      response.data.map(item => {
+      // Get course type list
+      const type = await course_type()
+      type.data.map(item => {
         item.type = item.category === 1 ? '全科' : '单科'
       })
-      this.types = response.data
-    },
-    // Get lecturer list
-    async toLecturerList() {
-      const response = await lecturer_list({ type: 'all' })
-      this.lecturers = response.data
-    },
-    // Get Chapter list
-    async toChapterList() {
-      const response = await chapter_list({ type: 'all' })
-      console.log(response)
-      this.chapters = response.data
+      this.types = type.data
+      // Get lecturer list
+      const lecturer = await lecturer_list({ type: 'all' })
+      this.lecturers = lecturer.data
+      // Get Chapter list
+      const chapter = await chapter_list({ type: 'all' })
+      this.chapters = chapter.data
+      // from
+      if (this.id) {
+        const response = await course_detail({ id: this.id })
+        this.form = response.data
+      }
+      this.loading = false
     },
     // Limit upload type
     beforeUpload(file) {

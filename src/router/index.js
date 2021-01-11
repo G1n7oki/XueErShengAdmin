@@ -18,6 +18,7 @@ import IssueRouter from './modules/issue'
 import FeedbackRouter from './modules/feedback'
 import ConsciouslyRouter from './modules/consciously'
 import CooperationRouter from './modules/cooperation'
+import AdRouter from './modules/ad'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -104,6 +105,7 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   UserRouter,
+  AdRouter,
   ArticleRouter,
   TeachRouter,
   ResourcesRouter,

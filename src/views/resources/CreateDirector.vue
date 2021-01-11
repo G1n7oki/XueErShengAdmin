@@ -98,7 +98,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleCreate">立即添加</el-button>
-          <el-button @click="handleCancle">取消</el-button>
+          <el-button @click="handleCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -187,7 +187,7 @@ export default {
       this.$message.success(response.status)
     },
     // Handle cancle button
-    handleCancle() {
+    handleCancel() {
       this.$router.push({ path: '/resources/director' })
     }
   }
