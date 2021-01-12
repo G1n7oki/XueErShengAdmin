@@ -20,7 +20,7 @@
             class="avatar-uploader"
             :action="url"
             :headers="headers"
-            :data="{ type: 1 }"
+            :data="{ type: 6 }"
             name="image"
             :show-file-list="false"
             :before-upload="beforeUpload"

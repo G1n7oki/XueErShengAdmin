@@ -20,7 +20,8 @@ const live = {
     path: 'create-live-package',
     component: () => import('@/views/live/CreateLivePackage'),
     name: 'CreateLivePackage',
-    meta: { title: '添加直播课包', noCache: true }
+    meta: { title: '直播课包信息', noCache: true },
+    hidden: true
   }, {
     path: 'live-list',
     component: () => import('@/views/live/LiveList'),

@@ -98,6 +98,18 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="推流地址">
+          <el-input
+            v-model="form.tuiliu"
+            :disabled="true"
+          />
+        </el-form-item>
+        <el-form-item label="播流地址">
+          <el-input
+            v-model="form.url"
+            :disabled="true"
+          />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSave">保存</el-button>
           <el-button @click="handleCancel">取消</el-button>
@@ -125,7 +137,9 @@ export default {
         stream_name: '',
         app_name: '',
         review_video_id: '',
-        file_id: ''
+        file_id: '',
+        tuiliu: '',
+        url: ''
       },
       lecturers: [],
       handouts: []
