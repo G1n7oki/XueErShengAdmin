@@ -19,7 +19,7 @@
         size="medium"
       >
         <el-table-column
-          prop="title"
+          prop="id"
           label="编号"
           align="center"
         />
@@ -29,28 +29,32 @@
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="content"
           label="回答"
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="cat_id"
           label="类型"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <span>{{ row.cat_id === 1 ? '账号问题' : '其他问题' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="title"
+          prop="sort"
           label="排序"
           align="center"
         />
         <el-table-column
           label="操作"
           align="center"
-          width="200"
+          width="150"
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="success" size="mini" @click="handleDelete(row)">
+            <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
             <el-button type="danger" size="mini" @click="handleDelete(row)">
@@ -72,7 +76,7 @@
     </el-card>
     <!-- Dialog -->
     <el-dialog
-      :title="text"
+      :title="title"
       :visible.sync="dialogVisible"
     >
       <el-form
@@ -81,22 +85,22 @@
         label-width="80px"
       >
         <el-form-item label="问题">
-          <el-input v-model="form.input" placeholder="请输入问题标题" />
+          <el-input v-model="form.title" placeholder="请输入问题标题" />
         </el-form-item>
         <el-form-item label="回答">
-          <el-input v-model="form.input" type="textarea" :rows="4" resize="none" placeholder="请输入内容" />
+          <el-input v-model="form.content" type="textarea" :rows="4" resize="none" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="form.value" placeholder="请选择">
-            <el-option label="账号问题" value="1" />
-            <el-option label="其他问题" value="2" />
+          <el-select v-model="form.cat_id" placeholder="请选择">
+            <el-option label="账号问题" :value="1" />
+            <el-option label="其他问题" :value="2" />
           </el-select>
         </el-form-item>
         <el-form-item label="排序">
-          <el-input v-model="form.input" placeholder="数字越大越靠前" />
+          <el-input v-model="form.sort" placeholder="数字越大越靠前" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">保存</el-button>
+          <el-button type="primary" @click="handleSave">保存</el-button>
           <el-button @click="dialogVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -107,6 +111,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
+import { help_list, help_create, help_update, help_delete } from '@/api/feedback'
 export default {
   name: 'Help',
   components: {
@@ -118,15 +123,64 @@ export default {
       loading: false,
       list: [],
       total: 0,
-      dialogVisible: true,
+      dialogVisible: false,
       titleMap: ['添加帮助', '编辑帮助'],
-      text: '',
-      form: {}
+      title: '',
+      form: {
+        id: '',
+        title: '',
+        content: '',
+        cat_id: '',
+        sort: ''
+      }
     }
   },
+  created() {
+    this.toData()
+  },
   methods: {
-    toData() {},
-    handleCreate() {}
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await help_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
+    },
+    // Handle create button
+    handleCreate() {
+      this.title = this.titleMap[0]
+      this.dialogVisible = true
+    },
+    // Create info
+    async create() {
+      const response = await help_create(this.form)
+      this.$message.success(response.status)
+    },
+    // Handle update button
+    handleUpdate(row) {
+      this.form = row
+      this.title = this.titleMap[1]
+      this.dialogVisible = true
+    },
+    // Update info
+    async update() {
+      const response = await help_update(this.form)
+      this.$message.success(response.status)
+    },
+    // Handle save button
+    handleSave() {
+      this.title === this.titleMap[0] ? this.create() : this.update()
+      this.toData()
+      this.dialogVisible = false
+    },
+    // Delete info
+    async handleDelete(row) {
+      const response = await help_delete({ id: row.id })
+      this.$message.success(response.status)
+      this.toData()
+    }
   }
 }
 </script>

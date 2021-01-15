@@ -18,41 +18,41 @@
         size="medium"
       >
         <el-table-column
-          prop="title"
+          prop="id"
           label="序号"
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="username"
           label="用户昵称"
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="login_tel"
           label="手机号"
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="msg"
           label="评论内容"
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="created_time"
           label="时间"
           align="center"
         />
         <el-table-column
           label="操作"
           align="center"
-          width="200"
+          width="100"
           class-name="small-padding fixed-width"
         >
-          <template>
-            <el-button type="info" size="mini">
+          <template slot-scope="{row}">
+            <el-button v-if="row.status === 1" type="info" size="mini" @click="handleUpdate(row)">
               已处理
             </el-button>
-            <el-button type="danger" size="mini">
+            <el-button v-else type="danger" size="mini" @click="handleUpdate(row)">
               未处理
             </el-button>
           </template>
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import { feedback_list, feedback_update } from '@/api/feedback'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'Feedback',
@@ -87,8 +88,31 @@ export default {
       total: 0
     }
   },
+  created() {
+    this.toData()
+  },
   methods: {
-    toData() {}
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await feedback_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
+    },
+    // Update info
+    async handleUpdate(row) {
+      if (row.status === 1) {
+        return
+      }
+      const response = await feedback_update({
+        id: row.id,
+        status: 1
+      })
+      this.$message.success(response.status)
+      this.toData()
+    }
   }
 }
 </script>
