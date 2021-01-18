@@ -8,7 +8,7 @@
           <el-input
             v-model="listQuery.search"
             clearable
-            placeholder="课程名称"
+            placeholder="计划名称"
           />
         </el-form-item>
         <el-form-item>
@@ -46,16 +46,6 @@
           align="center"
         />
         <el-table-column
-          prop="teacher_name"
-          label="报考开始时间"
-          align="center"
-        />
-        <el-table-column
-          prop="name"
-          label="报考结束时间"
-          align="center"
-        />
-        <el-table-column
           prop="status"
           label="是否启用"
           align="center"
@@ -65,7 +55,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="video_num"
+          prop="created_at"
           label="创建时间"
           align="center"
         />
@@ -77,10 +67,7 @@
         >
           <template slot-scope="{row}">
             <el-button type="success" size="mini" @click="handleUpdate(row)">
-              修改
-            </el-button>
-            <el-button type="success" size="mini" @click="handleDetail(row)">
-              详情
+              编辑
             </el-button>
           </template>
         </el-table-column>
@@ -101,6 +88,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
+import { plan_list } from '@/api/consciously'
 export default {
   name: 'Plan',
   components: {
@@ -119,12 +107,32 @@ export default {
       linkMap: ['danger', '']
     }
   },
+  created() {
+    this.toData()
+  },
   methods: {
-    toData() {},
-    handleQuery() {},
-    handleCreate() {},
-    handleUpdate() {},
-    handleDetail(row) {}
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await plan_list(this.listQuery)
+      const { data, total } = response.data
+      this.list = data
+      this.total = total
+      this.loading = false
+    },
+    // Query list
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
+    // Handle create button
+    handleCreate() {
+      this.$router.push({ path: '/consciously/info' })
+    },
+    // Handle update button
+    handleUpdate(row) {
+      this.$router.push({ path: '/consciously/info', query: { id: row.id }})
+    }
   }
 }
 </script>

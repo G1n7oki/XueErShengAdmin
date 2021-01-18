@@ -15,58 +15,48 @@
             placeholder="例如：2021级筑梦计划"
           />
         </el-form-item>
-        <el-form-item label="报考时间" prop="title">
-          <el-date-picker
-            v-model="form.title"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
+        <el-form-item label="计划类型" prop="type">
+          <el-select v-model="form.type" clearable>
+            <el-option label="自考" :value="1" />
+            <el-option label="成考" :value="2" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="年级" prop="title">
+        <el-form-item label="年级" prop="year">
           <el-input
-            v-model="form.title"
+            v-model="form.year"
             placeholder="例如：2021级"
           />
         </el-form-item>
-        <el-form-item label="推广页图片" prop="title">
+        <el-form-item label="推广图" prop="image_url">
           <el-upload
             class="avatar-uploader"
             :action="url"
             :headers="headers"
-            :data="{ type: 1 }"
+            :data="{ type: 9 }"
             name="image"
             :show-file-list="false"
             :before-upload="beforeUpload"
             :on-success="successUpload"
           >
-            <el-image v-if="form.cover" :src="form.cover" class="avatar" />
+            <el-image v-if="form.image_url" :src="form.image_url" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
           <div>建议尺寸200*200px;不超过2M; 图片格式支持png,jpg</div>
         </el-form-item>
-        <el-form-item label="是否启用" prop="title">
+        <el-form-item label="是否启用" prop="status">
           <el-select v-model="form.status" clearable>
             <el-option label="是" :value="1" />
             <el-option label="否" :value="0" />
           </el-select>
         </el-form-item>
-        <el-form-item label="开通课程" prop="title">
-          <el-input
-            v-model="form.title"
-            placeholder="课程名称"
-          />
-        </el-form-item>
-        <el-form-item label="费用价格" prop="title">
-          <el-input
-            v-model="form.title"
-            placeholder="课程名称"
-          />
+        <el-form-item label="礼包" prop="gift_id">
+          <el-select v-model="form.gift_id" clearable>
+            <el-option label="自考" :value="1" />
+            <el-option label="成考" :value="2" />
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleCreate">立即添加</el-button>
+          <el-button type="primary" @click="handleSave">立即添加</el-button>
           <el-button @click="handleCancel">取消</el-button>
         </el-form-item>
       </el-form>
@@ -76,6 +66,7 @@
 
 <script>
 import { url, headers } from '@/api/uplaod'
+import { plan_create, plan_update, plan_detail } from '@/api/consciously'
 export default {
   name: 'Info',
   data() {
@@ -83,13 +74,47 @@ export default {
       url,
       headers,
       loading: false,
-      form: {},
+      form: {
+        id: '',
+        title: '',
+        type: '',
+        image_url: '',
+        year: '',
+        status: '',
+        gift_id: ''
+      },
       rules: {}
     }
   },
+  created() {
+    this.init()
+  },
   methods: {
-    handleCreate() {},
-    handleCancel() {},
+    // init
+    async init() {
+      this.loading = true
+      const response = await plan_detail({ id: this.id })
+      this.form = response.data
+      this.loading = false
+    },
+    // Handle create button
+    handleSave() {
+      this.id ? this.update() : this.create()
+    },
+    // Create info
+    async create() {
+      const response = await plan_create(this.form)
+      this.$message.success(response.status)
+    },
+    // Update info
+    async update() {
+      const response = await plan_update(this.form)
+      this.$message.success(response.status)
+    },
+    // Handle cancle button
+    handleCancel() {
+      this.$router.push({ path: '/consciously/plan' })
+    },
     // Limit upload type
     beforeUpload(file) {
       const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -101,7 +126,7 @@ export default {
     // Cover upload
     successUpload(res) {
       const { host_url } = res.data
-      this.form.cover = host_url
+      this.form.image_url = host_url
     }
   }
 }

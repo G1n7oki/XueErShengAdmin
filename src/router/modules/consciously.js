@@ -20,12 +20,18 @@ const consciously = {
     path: 'info',
     component: () => import('@/views/consciously/Info'),
     name: 'ApplyInfo',
-    meta: { title: '报考信息', noCache: true }
+    meta: { title: '报考信息', noCache: true },
+    hidden: true
   }, {
     path: 'manage',
     component: () => import('@/views/consciously/Manage'),
     name: 'Manage',
     meta: { title: '报考管理', noCache: true }
+  }, {
+    path: 'gift',
+    component: () => import('@/views/consciously/Gift'),
+    name: 'Gift',
+    meta: { title: '报考礼包', noCache: true }
   }, {
     path: 'transcript',
     component: () => import('@/views/consciously/Transcript'),
