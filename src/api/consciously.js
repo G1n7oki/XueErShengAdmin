@@ -32,3 +32,28 @@ export function plan_update(data) {
     data
   })
 }
+
+// Gift list
+export function gift_list(query) {
+  return request({
+    url: '/gift/index',
+    method: 'get',
+    params: query
+  })
+}
+// Create gift
+export function gift_create(data) {
+  return request({
+    url: '/gift/add',
+    method: 'post',
+    data
+  })
+}
+// Update gift
+export function gift_update(data) {
+  return request({
+    url: '/gift/edit',
+    method: 'post',
+    data
+  })
+}

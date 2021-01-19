@@ -83,10 +83,13 @@ export default {
         status: '',
         gift_id: ''
       },
-      rules: {}
+      rules: {},
+      id: ''
     }
   },
   created() {
+    this.id = this.$route.query.id
+    if (!this.id) return
     this.init()
   },
   methods: {
