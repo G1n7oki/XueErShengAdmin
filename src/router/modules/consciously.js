@@ -36,7 +36,8 @@ const consciously = {
     path: 'transcript',
     component: () => import('@/views/consciously/Transcript'),
     name: 'Transcript',
-    meta: { title: '成绩单', noCache: true }
+    meta: { title: '成绩单', noCache: true },
+    hidden: true
   }]
 }
 

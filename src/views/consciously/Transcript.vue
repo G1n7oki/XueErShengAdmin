@@ -19,22 +19,21 @@
         size="medium"
       >
         <el-table-column
-          prop="id"
-          label="序号"
+          type="index"
           align="center"
         />
         <el-table-column
-          prop="title"
+          prop="cours_code"
           label="代码"
           align="center"
         />
         <el-table-column
-          prop="teacher_name"
+          prop="title"
           label="课程名称"
           align="center"
         />
         <el-table-column
-          prop="name"
+          prop="point"
           label="成绩"
           align="center"
         />
@@ -52,15 +51,6 @@
         </el-table-column>
       </el-table>
       <!-- /table -->
-      <!-- Page -->
-      <pagination
-        v-show="total > 0"
-        :total="total"
-        :page.sync="listQuery.page"
-        :limit.sync="listQuery.per_page"
-        @pagination="toData"
-      />
-      <!-- /Page -->
     </el-card>
     <!-- Dialog -->
     <el-dialog
@@ -92,12 +82,9 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination'
+import { transcript_list } from '@/api/consciously'
 export default {
   name: 'Transcript',
-  components: {
-    Pagination
-  },
   data() {
     return {
       listQuery: {
@@ -110,11 +97,24 @@ export default {
       dialogVisible: false,
       title: '创建',
       titleMap: ['创建', '编辑'],
-      form: {}
+      form: {},
+      uid: ''
     }
   },
+  created() {
+    this.uid = this.$route.query.uid
+    this.toData()
+  },
   methods: {
-    toData() {},
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await transcript_list({ uid: this.uid })
+      const { data, total } = response
+      this.list = data
+      this.total = total
+      this.loading = false
+    },
     handleCreate() {
       this.title = this.titleMap[0]
       this.dialogVisible = true

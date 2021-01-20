@@ -51,8 +51,12 @@
         </el-form-item>
         <el-form-item label="礼包" prop="gift_id">
           <el-select v-model="form.gift_id" clearable>
-            <el-option label="自考" :value="1" />
-            <el-option label="成考" :value="2" />
+            <el-option
+              v-for="gift in gifts"
+              :key="gift.id"
+              :label="gift.title"
+              :value="gift.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -66,7 +70,7 @@
 
 <script>
 import { url, headers } from '@/api/uplaod'
-import { plan_create, plan_update, plan_detail } from '@/api/consciously'
+import { plan_create, plan_update, plan_detail, gift_list } from '@/api/consciously'
 export default {
   name: 'Info',
   data() {
@@ -84,20 +88,25 @@ export default {
         gift_id: ''
       },
       rules: {},
-      id: ''
+      id: '',
+      gifts: []
     }
   },
   created() {
     this.id = this.$route.query.id
-    if (!this.id) return
     this.init()
   },
   methods: {
     // init
     async init() {
       this.loading = true
-      const response = await plan_detail({ id: this.id })
-      this.form = response.data
+      // Get gift list
+      const gift = await gift_list({ type: 'all' })
+      this.gifts = gift.data
+      if (this.id) {
+        const response = await plan_detail({ id: this.id })
+        this.form = response.data
+      }
       this.loading = false
     },
     // Handle create button

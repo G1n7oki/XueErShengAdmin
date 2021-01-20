@@ -57,3 +57,21 @@ export function gift_update(data) {
     data
   })
 }
+
+// Manage list
+export function manage_list(query) {
+  return request({
+    url: '/applies/manage',
+    method: 'get',
+    params: query
+  })
+}
+
+// Transcript list
+export function transcript_list(query) {
+  return request({
+    url: '/applies/report_cards',
+    method: 'get',
+    params: query
+  })
+}

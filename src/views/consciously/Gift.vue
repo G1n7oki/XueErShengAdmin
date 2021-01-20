@@ -36,8 +36,7 @@
         size="medium"
       >
         <el-table-column
-          prop="id"
-          label="序号"
+          type="index"
           align="center"
         />
         <el-table-column
