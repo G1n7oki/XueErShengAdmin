@@ -4,9 +4,9 @@
       <!-- Table header -->
       <div class="table-header">
         <div class="left">
-          <div class="name">成绩单列表</div>
+          <div class="name">区/县列表</div>
         </div>
-        <el-button type="primary" @click="handleCreate">添加成绩单</el-button>
+        <el-button type="primary" @click="handleCreate">添加地区</el-button>
       </div>
       <!-- /Table header -->
       <!-- table -->
@@ -23,18 +23,13 @@
           align="center"
         />
         <el-table-column
-          prop="course_code"
-          label="代码"
+          prop="name"
+          label="所在城市"
           align="center"
         />
         <el-table-column
-          prop="title"
-          label="课程名称"
-          align="center"
-        />
-        <el-table-column
-          prop="point"
-          label="成绩"
+          prop="p_name"
+          label="所在区县"
           align="center"
         />
         <el-table-column
@@ -51,6 +46,15 @@
         </el-table-column>
       </el-table>
       <!-- /table -->
+      <!-- Page -->
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.per_page"
+        @pagination="toData"
+      />
+      <!-- /Page -->
     </el-card>
     <!-- Dialog -->
     <el-dialog
@@ -58,18 +62,14 @@
       :visible.sync="dialogVisible"
     >
       <el-form
-        ref="form"
         :model="form"
         label-width="80px"
       >
-        <el-form-item label="代码">
-          <el-input v-model="form.course_code" placeholder="请输入代码" />
+        <el-form-item label="所在城市">
+          <el-input v-model="form.city" />
         </el-form-item>
-        <el-form-item label="课程名称">
-          <el-input v-model="form.title" placeholder="请输入课程名称" />
-        </el-form-item>
-        <el-form-item label="成绩">
-          <el-input v-model="form.point" placeholder="请输入成绩" />
+        <el-form-item label="所在城市">
+          <el-input v-model="form.county" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSave">保存</el-button>
@@ -82,68 +82,45 @@
 </template>
 
 <script>
-import { transcript_list, transcript_update, transcript_create } from '@/api/consciously'
+import Pagination from '@/components/Pagination'
 export default {
-  name: 'Transcript',
+  name: 'Manage',
+  components: {
+    Pagination
+  },
   data() {
     return {
-      listQuery: {
-        page: 1,
-        per_page: 10
-      },
+      listQuery: {},
       loading: false,
       list: [],
       total: 0,
       dialogVisible: false,
-      title: '创建',
-      titleMap: ['创建成绩单', '编辑成绩单'],
+      title: '',
+      titleMap: ['创建地区', '编辑地区'],
       form: {
-        id: '',
-        uid: '',
-        course_code: '',
-        title: '',
-        point: ''
+        city: '',
+        county: ''
       }
     }
   },
-  created() {
-    this.form.uid = this.$route.query.uid
-    this.toData()
-  },
   methods: {
     // Get list
-    async toData() {
-      this.loading = true
-      const response = await transcript_list({ uid: this.form.uid })
-      const { data, total } = response
-      this.list = data
-      this.total = total
-      this.loading = false
-    },
+    toData() {},
     // Handle create button
     handleCreate() {
       this.title = this.titleMap[0]
       this.dialogVisible = true
     },
     // Create info
-    async create() {
-      const response = await transcript_create(this.form)
-      this.$message.success(response.status)
-      this.toData()
-    },
+    create() {},
     // Handle update button
     handleUpdate(row) {
       this.title = this.titleMap[1]
-      this.form = row
       this.dialogVisible = true
     },
     // Update info
-    async update() {
-      const response = await transcript_update(this.form)
-      this.$message.success(response.status)
-      this.toData()
-    },
-    // Save info
+    update() {},
+    // Handle save button
     handleSave() {
       this.title === this.titleMap[0] ? this.create() : this.update()
     }

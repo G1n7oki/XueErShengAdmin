@@ -75,3 +75,19 @@ export function transcript_list(query) {
     params: query
   })
 }
+// Update transcript
+export function transcript_update(data) {
+  return request({
+    url: '/report_cards/edit',
+    method: 'post',
+    data
+  })
+}
+// Create transcript
+export function transcript_create(data) {
+  return request({
+    url: '/report_cards/add',
+    method: 'post',
+    data
+  })
+}

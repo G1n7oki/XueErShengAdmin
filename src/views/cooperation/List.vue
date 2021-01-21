@@ -4,28 +4,8 @@
     <el-card class="filter-container">
       <div class="filter-title">筛选</div>
       <el-form :inline="true">
-        <el-form-item label="省份">
-          <el-select v-model="listQuery.value" clearable>
-            <el-option label="江西省" value="1" />
-            <el-option label="江西省" value="2" />
-            <el-option label="江西省" value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="层次">
-          <el-cascader
-            v-model="listQuery.value1"
-            :options="options"
-          />
-        </el-form-item>
-        <el-form-item label="学习形式">
-          <el-select v-model="listQuery.value" clearable>
-            <el-option label="函授" value="1" />
-            <el-option label="脱产" value="2" />
-            <el-option label="业余" value="3" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
-          <el-input v-model="listQuery.name" clearable placeholder="学校名称" />
+          <el-input v-model="listQuery.search" clearable placeholder="学校名称" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -52,8 +32,7 @@
         size="medium"
       >
         <el-table-column
-          prop="title"
-          label="序号"
+          type="index"
           align="center"
         />
         <el-table-column
@@ -62,30 +41,41 @@
           align="center"
         />
         <el-table-column
-          prop="p_name"
+          prop="image"
+          label="学校Logo"
+          align="center"
+        >
+          <template slot-scope="{row}">
+            <el-image :src="row.image" style="max-width: 100px">
+              <div slot="placeholder" class="image-slot">
+                <i class="el-icon-loading" />
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="province"
           label="省份"
           align="center"
         />
         <el-table-column
-          prop="sort"
-          label="层次"
-          align="center"
-        />
-        <el-table-column
-          prop="sort"
-          label="学习形式"
-          align="center"
-        />
-        <el-table-column
-          prop="sort"
+          prop="profession_count"
           label="可报专业数"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <el-link type="primary" @click="to('/cooperation/level', row)">{{ row.sort }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="sort"
+          prop="status"
           label="状态"
           align="center"
-        />
+        >
+          <template slot-scope="{row}">
+            <span>{{ row.status === 0 ? '禁用' : '启用' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           align="center"
@@ -93,67 +83,171 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{row}">
-            <el-button type="info" size="mini" @click="handleUpdate(row)">
-              查看
-            </el-button>
-            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+            <el-button type="success" size="mini" @click="handleUpdate(row)">
               编辑
             </el-button>
-            <el-button type="success" size="mini" @click="handleUpdate(row)">
-              启用
-            </el-button>
-            <el-button type="danger" size="mini" @click="handleDelete(row)">
-              禁用
+            <el-button type="primary" size="mini" @click="to('/cooperation/manage',row)">
+              地区管理
             </el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- /table -->
+      <!-- Page -->
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.per_page"
+        @pagination="toData"
+      />
+      <!-- /Page -->
     </el-card>
+    <!-- Dialog -->
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+    >
+      <el-form
+        :model="form"
+        label-width="80px"
+      >
+        <el-form-item label="学校名称">
+          <el-input v-model="form.name" placeholder="请输入学校名称" />
+        </el-form-item>
+        <el-form-item label="学校Logo">
+          <el-upload
+            class="avatar-uploader"
+            :action="url"
+            :headers="headers"
+            :data="{ type: 5 }"
+            name="image"
+            :show-file-list="false"
+            :before-upload="beforeUpload"
+            :on-success="successUpload"
+          >
+            <el-image v-if="form.wechat_code" :src="form.wechat_code" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+          <div>建议尺寸200*200px;不超过2M; 图片格式支持png,jpg</div>
+        </el-form-item>
+        <el-form-item label="所属省份">
+          <el-input v-model="form.name" placeholder="请输入所属省份" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSave">保存</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!-- /Dialog -->
   </div>
 </template>
 
 <script>
+import { url, headers } from '@/api/uplaod'
+import { consciously_list } from '@/api/cooperation'
+import Pagination from '@/components/Pagination'
 export default {
   name: 'Cooperation',
+  components: {
+    Pagination
+  },
   data() {
     return {
-      listQuery: {},
-      options: [{
-        value: 1,
-        label: '自考',
-        children: [{
-          value: 1,
-          label: '高升专'
-        }, {
-          value: 2,
-          label: '专升本'
-        }]
-      }, {
-        value: 2,
-        label: '成考',
-        children: [{
-          value: 1,
-          label: '高升专'
-        }, {
-          value: 2,
-          label: '专升本'
-        }, {
-          value: 3,
-          label: '高升本'
-        }]
-      }],
+      url,
+      headers,
+      listQuery: {
+        page: 1,
+        per_page: 10,
+        search: ''
+      },
       loading: false,
-      list: []
+      list: [],
+      total: 0,
+      title: '',
+      titleMap: ['创建院校', '编辑院校'],
+      dialogVisible: false,
+      form: {}
     }
   },
+  created() {
+    this.toData()
+  },
   methods: {
-    handleQuery() {},
-    handleCreate() {}
+    // Get list
+    async toData() {
+      this.loading = true
+      const response = await consciously_list(this.listQuery)
+      const { data, total } = response.data
+      this.total = total
+      this.list = data
+      this.loading = false
+    },
+    // Query list
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
+    // Handle create button
+    handleCreate() {
+      this.title = this.titleMap[0]
+      this.dialogVisible = true
+    },
+    create() {},
+    // Handle update button
+    handleUpdate(row) {
+      this.title = this.titleMap[1]
+      this.dialogVisible = true
+    },
+    update() {},
+    // Limit upload type
+    beforeUpload(file) {
+      const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
+      if (!isImage) {
+        this.$message.error('只能上传图片格式的文件!')
+      }
+      return isImage
+    },
+    successUpload(res) {
+      const { host_url } = res.data
+      this.form.head = host_url
+    },
+    handleSave() {
+      this.title === this.titleMap[0] ? this.create() : this.update()
+    },
+    to(path, row) {
+      this.$router.push({ path, query: { id: row.id }})
+    }
   }
 }
 </script>
 
-<style scoped>
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
 
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 104px;
+  height: 104px;
+  line-height: 104px;
+  text-align: center;
+}
+
+.avatar {
+  width: 104px;
+  height: 104px;
+  display: block;
+}
 </style>
