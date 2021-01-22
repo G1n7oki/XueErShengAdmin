@@ -160,7 +160,7 @@ export default {
     },
     // Handle update button
     handleUpdate(row) {
-      this.form = row
+      this.form = Object.assign({}, row)
       this.title = this.titleMap[1]
       this.dialogVisible = true
     },

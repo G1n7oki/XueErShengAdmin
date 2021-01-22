@@ -120,19 +120,28 @@
             class="avatar-uploader"
             :action="url"
             :headers="headers"
-            :data="{ type: 5 }"
+            :data="{ type: 9 }"
             name="image"
             :show-file-list="false"
             :before-upload="beforeUpload"
             :on-success="successUpload"
           >
-            <el-image v-if="form.wechat_code" :src="form.wechat_code" class="avatar" />
+            <el-image v-if="form.image" :src="form.image" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
           <div>建议尺寸200*200px;不超过2M; 图片格式支持png,jpg</div>
         </el-form-item>
         <el-form-item label="所属省份">
-          <el-input v-model="form.name" placeholder="请输入所属省份" />
+          <el-input v-model="form.province" placeholder="请输入所属省份" />
+        </el-form-item>
+        <el-form-item label="是否启用">
+          <el-select v-model="form.status" placeholder="请选择">
+            <el-option label="是" :value="1" />
+            <el-option label="否" :value="0" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="排序">
+          <el-input v-model="form.sort" placeholder="请输入排序" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSave">保存</el-button>
@@ -146,7 +155,7 @@
 
 <script>
 import { url, headers } from '@/api/uplaod'
-import { consciously_list } from '@/api/cooperation'
+import { consciously_list, consciously_create, consciously_update } from '@/api/cooperation'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'Cooperation',
@@ -168,7 +177,14 @@ export default {
       title: '',
       titleMap: ['创建院校', '编辑院校'],
       dialogVisible: false,
-      form: {}
+      form: {
+        id: '',
+        name: '',
+        status: '',
+        image: '',
+        sort: '',
+        province: ''
+      }
     }
   },
   created() {
@@ -194,13 +210,25 @@ export default {
       this.title = this.titleMap[0]
       this.dialogVisible = true
     },
-    create() {},
+    // Create info
+    async create() {
+      const response = await consciously_create(this.form)
+      this.$message.success(response.status)
+      this.dialogVisible = false
+      this.toData()
+    },
     // Handle update button
     handleUpdate(row) {
+      this.form = Object.assign({}, row)
       this.title = this.titleMap[1]
       this.dialogVisible = true
     },
-    update() {},
+    async update() {
+      const response = await consciously_update(this.form)
+      this.$message.success(response.status)
+      this.dialogVisible = false
+      this.toData()
+    },
     // Limit upload type
     beforeUpload(file) {
       const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -211,7 +239,7 @@ export default {
     },
     successUpload(res) {
       const { host_url } = res.data
-      this.form.head = host_url
+      this.form.image = host_url
     },
     handleSave() {
       this.title === this.titleMap[0] ? this.create() : this.update()

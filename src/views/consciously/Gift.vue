@@ -244,19 +244,21 @@ export default {
     async create() {
       const response = await gift_create(this.form)
       this.$message.success(response.status)
+      this.dialogVisible = false
       this.toData()
     },
     // Handle update button
     handleUpdate(row) {
-      this.form = row
+      this.form = Object.assign({}, row)
       this.title = this.titleMap[1]
       this.dialogVisible = true
-      this.toData()
     },
     // Update info
     async update() {
       const response = await gift_update(this.form)
       this.$message.success(response.status)
+      this.dialogVisible = false
+      this.toData()
     },
     // Handle Save button
     handleSave() {

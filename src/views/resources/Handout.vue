@@ -174,10 +174,7 @@ export default {
     },
     // Handle update button
     handleUpdate(row) {
-      this.form = {
-        id: row.id,
-        name: row.file_name
-      }
+      this.form = Object.assign({}, row)
       this.dialogVisible.update = true
     },
     // Update handout

@@ -234,13 +234,7 @@ export default {
     },
     // Update dialog show
     handleUpdate(row) {
-      this.form = {
-        id: row.id,
-        is_try: row.is_try,
-        status: row.status,
-        name: row.name,
-        file_id: row.file_id
-      }
+      this.form = Object.assign({}, row)
       this.updateDialogVisible = true
     },
     // Update video

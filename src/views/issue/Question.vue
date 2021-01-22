@@ -238,6 +238,7 @@ export default {
     // Hadnle send button
     async handleSend() {
       const response = await question_reply(this.form)
+      this.dialog.reply = false
       this.$message.success(response.status)
     },
     // Delete info

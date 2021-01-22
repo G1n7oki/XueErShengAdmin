@@ -129,18 +129,20 @@ export default {
     async create() {
       const response = await transcript_create(this.form)
       this.$message.success(response.status)
+      this.dialogVisible = false
       this.toData()
     },
     // Handle update button
     handleUpdate(row) {
       this.title = this.titleMap[1]
-      this.form = row
+      this.form = Object.assign({}, row)
       this.dialogVisible = true
     },
     // Update info
     async update() {
       const response = await transcript_update(this.form)
       this.$message.success(response.status)
+      this.dialogVisible = false
       this.toData()
     },
     // Save info

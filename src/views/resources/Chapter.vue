@@ -234,12 +234,7 @@ export default {
     // Handle update button
     handleUpdate(row) {
       this.title = this.titleMap[1]
-      this.form = {
-        id: row.id,
-        name: row.name,
-        status: row.status,
-        sort: row.sort
-      }
+      this.form = Object.assign({}, row)
       this.dialogVisible = true
     },
     // update chapter

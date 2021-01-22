@@ -23,13 +23,18 @@
           align="center"
         />
         <el-table-column
-          prop="name"
+          prop="city"
           label="所在城市"
           align="center"
         />
         <el-table-column
-          prop="p_name"
+          prop="counties"
           label="所在区县"
+          align="center"
+        />
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
           align="center"
         />
         <el-table-column
@@ -69,7 +74,7 @@
           <el-input v-model="form.city" />
         </el-form-item>
         <el-form-item label="所在城市">
-          <el-input v-model="form.county" />
+          <el-input v-model="form.counties" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSave">保存</el-button>
@@ -83,6 +88,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
+import { area_list, area_create, area_update } from '@/api/cooperation'
 export default {
   name: 'Manage',
   components: {
@@ -90,7 +96,11 @@ export default {
   },
   data() {
     return {
-      listQuery: {},
+      listQuery: {
+        page: 1,
+        per_page: 10,
+        school_id: ''
+      },
       loading: false,
       list: [],
       total: 0,
@@ -98,28 +108,52 @@ export default {
       title: '',
       titleMap: ['创建地区', '编辑地区'],
       form: {
+        school_id: '',
         city: '',
-        county: ''
+        counties: ''
       }
     }
   },
+  created() {
+    this.listQuery.school_id = this.$route.query.id
+    this.form.school_id = this.$route.query.id
+    this.toData()
+  },
   methods: {
     // Get list
-    toData() {},
+    async toData() {
+      this.loading = true
+      const response = await area_list(this.listQuery)
+      const { data, total } = response.data
+      this.total = total
+      this.list = data
+      this.loading = false
+    },
     // Handle create button
     handleCreate() {
       this.title = this.titleMap[0]
       this.dialogVisible = true
     },
     // Create info
-    create() {},
+    async create() {
+      const response = await area_create(this.form)
+      this.$message.success(response.status)
+      this.dialogVisible = false
+      this.toData()
+    },
     // Handle update button
     handleUpdate(row) {
+      this.form = Object.assign({}, row)
       this.title = this.titleMap[1]
       this.dialogVisible = true
     },
     // Update info
-    update() {},
+    async update() {
+      const response = await area_update(this.form)
+      this.$message.success(response.status)
+      this.dialogVisible = false
+      this.toData()
+    },
     // Handle save button
     handleSave() {
       this.title === this.titleMap[0] ? this.create() : this.update()
