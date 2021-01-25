@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import User from '@/api/user.json'
 import UserTabBar from '@/views/user/TabBar'
 import Pagination from '@/components/Pagination'
 
@@ -134,8 +133,6 @@ export default {
   },
   methods: {
     toData() {
-      this.list = User.detail
-      this.total = this.list.length
       this.loading = false
     }
   }
