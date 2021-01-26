@@ -16,6 +16,16 @@ const topic = {
     component: () => import('@/views/topic/Topic'),
     name: 'Topic',
     meta: { title: '题目管理', noCache: true }
+  }, {
+    path: 'paper',
+    component: () => import('@/views/topic/Paper'),
+    name: 'paper',
+    meta: { title: '试卷管理', noCache: true }
+  }, {
+    path: 'practise',
+    component: () => import('@/views/topic/Practise'),
+    name: 'Practise',
+    meta: { title: '章节精练', noCache: true }
   }]
 }
 

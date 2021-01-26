@@ -5,7 +5,7 @@
       <div class="filter-title">筛选</div>
       <el-form :inline="true">
         <el-form-item>
-          <el-input v-model="listQuery.search" placeholder="题目名称" />
+          <el-input v-model="listQuery.search" placeholder="题目内容" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">筛选</el-button>
@@ -105,7 +105,7 @@
         label-width="80px"
       >
         <el-form-item label="题目内容">
-          <el-input v-model="topic.form.title" />
+          <el-input v-model="topic.form.content" />
         </el-form-item>
         <el-form-item label="解析">
           <el-input v-model="topic.form.parse" type="textarea" :rows="3" />
@@ -126,10 +126,13 @@
           />
         </el-form-item>
         <el-form-item label="排序">
-          <el-input v-model="topic.form.title" />
+          <el-input v-model="topic.form.sort" />
+        </el-form-item>
+        <el-form-item label="年份">
+          <el-input v-model="topic.form.year" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">确定</el-button>
+          <el-button type="primary" @click="handleSave">确定</el-button>
           <el-button @click="topic.dialog = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -164,7 +167,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-button type="danger" icon="el-icon-delete" circle />
+            <el-button type="danger" icon="el-icon-delete" circle @click="handleDeleteOption(item)" />
           </el-col>
         </el-row>
         <el-form-item>
@@ -181,7 +184,15 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { profession_list } from '@/api/profession'
-import { topic_list, topic_option_detail, update_topic_option } from '@/api/topic'
+import {
+  topic_list,
+  topic_option_detail,
+  update_topic_option,
+  delete_topic_option,
+  delete_topic,
+  create_topic,
+  update_topic
+} from '@/api/topic'
 export default {
   name: 'Topic',
   components: {
@@ -192,12 +203,11 @@ export default {
       id: '',
       listQuery: {
         page: 1,
-        per_page: 10
+        per_page: 10,
+        search: ''
       },
       loading: false,
-      list: [{
-        id: 1
-      }],
+      list: [],
       profession: [],
       total: 0,
       topic: {
@@ -208,7 +218,8 @@ export default {
           parse: '',
           question_type: '',
           profession_id: '',
-          profession_list: []
+          profession_list: [],
+          year: ''
         }
       },
       options: {
@@ -216,7 +227,8 @@ export default {
           id: '',
           name: '',
           content: '',
-          is_answer: ''
+          is_answer: '',
+          sort: ''
         }],
         dialog: false,
         loading: false
@@ -244,15 +256,36 @@ export default {
       this.profession = profession.data
     },
     // Query list
-    handleQuery() {},
+    handleQuery() {
+      this.listQuery.page = 1
+      this.toData()
+    },
     handleCreate() {
       this.topic.title = this.topic.titleMap[0]
       this.topic.dialog = true
     },
+    async create() {
+      this.topic.form.profession_id = this.topic.form.profession_list[3]
+      const response = await create_topic(this.topic.form)
+      this.$message.success(response.status)
+    },
     // Handle update button
     handleUpdate(row) {
       this.topic.title = this.topic.titleMap[1]
+      this.topic.form = Object.assign({}, row)
       this.topic.dialog = true
+    },
+    // update info
+    async update() {
+      this.topic.form.profession_id = this.topic.form.profession_list[3]
+      const response = await update_topic(this.topic.form)
+      this.$message.success(response.status)
+    },
+    // Handle save button
+    handleSave() {
+      this.topic.title === this.topic.titleMap[0] ? this.create() : this.update()
+      this.topic.dialog = false
+      this.toData()
     },
     // Handle option button
     async handleOption(row) {
@@ -269,7 +302,7 @@ export default {
         id: '',
         abcd_order: '',
         content: '',
-        answer: ''
+        is_answer: ''
       })
     },
     // Save options
@@ -284,6 +317,38 @@ export default {
       this.$message.success(response.status)
       this.options.dialog = false
       this.toData()
+    },
+    // Handle delete button
+    handleDelete(row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const response = await delete_topic({
+          id: row.id
+        })
+        this.$message.success(response.status)
+        this.toData()
+      }).catch(() => {})
+    },
+    // Delete topic option
+    handleDeleteOption(row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const response = await delete_topic_option({
+          question_id: this.id,
+          id: row.id
+        })
+        this.$message.success(response.status)
+        this.options.loading = true
+        const options = await topic_option_detail({ question_id: this.id })
+        this.options.item = options.data.option
+        this.options.loading = false
+      }).catch(() => {})
     }
   }
 }
