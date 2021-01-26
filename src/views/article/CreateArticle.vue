@@ -29,6 +29,10 @@
               label="报考流程"
               :value="6"
             />
+            <el-option
+              label="报考须知"
+              :value="7"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
