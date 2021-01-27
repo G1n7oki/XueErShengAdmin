@@ -64,3 +64,85 @@ export function delete_topic_option(data) {
     data
   })
 }
+// Topic all profession
+export function topic_all(query) {
+  return request({
+    url: '/question/all',
+    method: 'get',
+    params: query
+  })
+}
+
+// Paper list
+export function paper_list(query) {
+  return request({
+    url: '/question/paper',
+    method: 'get',
+    params: query
+  })
+}
+// Create paper
+export function create_paper(data) {
+  return request({
+    url: '/question/add_paper',
+    method: 'post',
+    data
+  })
+}
+// Update paper
+export function update_paper(data) {
+  return request({
+    url: '/question/edit_paper',
+    method: 'post',
+    data
+  })
+}
+// Delete paper
+export function delete_paper(data) {
+  return request({
+    url: '/question/del_paper',
+    method: 'post',
+    data
+  })
+}
+// Paper all
+export function paper_all(query) {
+  return request({
+    url: '/question/all_paper',
+    method: 'get',
+    params: query
+  })
+}
+
+// Practice list
+export function practice_list(query) {
+  return request({
+    url: '/question/refine',
+    method: 'get',
+    params: query
+  })
+}
+// Create practice
+export function create_practice(data) {
+  return request({
+    url: '/question/add_refine',
+    method: 'post',
+    data
+  })
+}
+// Update practice
+export function update_practice(data) {
+  return request({
+    url: '/question/edit_refine',
+    method: 'post',
+    data
+  })
+}
+// Delete practice
+export function delete_practice(data) {
+  return request({
+    url: '/question/del_refine',
+    method: 'post',
+    data
+  })
+}

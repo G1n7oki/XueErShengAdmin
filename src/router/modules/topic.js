@@ -9,7 +9,7 @@ const topic = {
   name: 'TopicManage',
   meta: {
     title: '题库管理',
-    icon: 'documentation'
+    icon: 'component'
   },
   children: [{
     path: 'topic',

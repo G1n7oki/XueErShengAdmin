@@ -17,6 +17,7 @@
           <el-select v-model="listQuery.type" placeholder="请选择" clearable>
             <el-option label="考生必看" value="5" />
             <el-option label="报考流程" value="6" />
+            <el-option label="报考须知" value="7" />
           </el-select>
         </el-form-item>
         <el-form-item>
